@@ -8,7 +8,6 @@ from player import Player
 from enemy import Enemy
 from menu import main_menu
 from cards import create_initial_deck, draw_hand
-
 pygame.init()
 
 #set the screen variable size
@@ -208,6 +207,8 @@ while run:
     total_hand_width = len(player_hand) * card_width + (len(player_hand) - 1) * card_spacing
     start_x = (SCREEN_WIDTH - total_hand_width) // 2
 
+    #-------------------------------------------------------------------------------------------------------------------------------------------
+    #Active Game loop
 
     #Draw the deck onto screen
     for i, card in enumerate(player_hand):
@@ -244,6 +245,10 @@ while run:
         pygame.draw.rect(screen, (100, 200, 100), end_turn_button_rect)
         screen.blit(end_turn_button_text, (SCREEN_WIDTH - 140, 20))
 
+    #-------------------------------------------------------------------------------------------------------------------------------------------
+    #ENEMY TURN
+
+
     #enemy turn
     if not turn_active and enemy_turn_text is None:
         if random.choice([True, False]):  #simulate enemy's decision to attack or defend
@@ -262,6 +267,9 @@ while run:
     if enemy_turn_text is not None:
         enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 0, 0)) 
         screen.blit(enemy_turn_text_rendered, ((SCREEN_WIDTH - enemy_turn_text_rendered.get_width()) // 2, 150))
+
+    #-------------------------------------------------------------------------------------------------------------------------------------------
+    #PLAYER TURN
 
     #Player turn 
     for event in pygame.event.get():
@@ -335,7 +343,7 @@ while run:
                                 selected_card = None
 
         
-
+    
     #check if it's the enemys turn and end after X seconds
     if not turn_active and enemy_turn_text is not None:
         if time.time() - start_enemy_turn_time >= enemy_turn_duration:

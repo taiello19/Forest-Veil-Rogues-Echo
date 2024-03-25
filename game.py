@@ -21,10 +21,12 @@ font = pygame.font.Font(None, 36)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 5)]
 emotion_descriptions = {
-    0: "Happiness, when playing an attack gain a strength buff for that turn!",
-    1: "Emotion not available",
-    2: "Emotion not available",
-    3: "Emotion not available"
+    0: "Excited, when playing an attack gain a strength buff for that turn!",
+    1: "Nervous, descriptiion here",
+    2: "Depressed, description here",
+    3: "Vengeful, description here",
+    4: "Optimistic, description here",
+    5: "Tired, description here"
     # Ensure there's an entry for every emotion index
 }
 
@@ -175,14 +177,18 @@ while run:
         emotion_index = selected_emoji_index
         #different emotions giving different buffs
         if emotion_index == 0:
-            additional_text = "+1 Strength after playing an attack card"
+            additional_text = "Excited"
             happiness_modifier_active = True
         elif emotion_index == 1:
-            additional_text = "Coming soon..."
+            additional_text = "Nervous"
         elif emotion_index == 2:
-            additional_text = "Coming soon..."
+            additional_text = "Depressed"
         elif emotion_index == 3:
-            additional_text = "Coming soon..."
+            additional_text = "Vengeful"
+        elif emotion_index == 4:
+            additional_text = "Optimistic"
+        elif emotion_index == 5:
+            additional_text = "Tired"
         else:
             additional_text = "Woopsie, something messed up, you shouldn't be here!!"
             #add code to kick them to main menu
@@ -343,7 +349,7 @@ while run:
                                 selected_card = None
 
         
-    
+
     #check if it's the enemys turn and end after X seconds
     if not turn_active and enemy_turn_text is not None:
         if time.time() - start_enemy_turn_time >= enemy_turn_duration:

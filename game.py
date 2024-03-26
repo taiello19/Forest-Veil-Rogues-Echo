@@ -19,9 +19,9 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 title_font = pygame.font.Font(None, 72)
 font = pygame.font.Font(None, 36)
 
-emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 5)]
+emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 7)]
 emotion_descriptions = {
-    0: "Excited, when playing an attack gain a strength buff for that turn!",
+    0: "Excited, description here",
     1: "Nervous, descriptiion here",
     2: "Depressed, description here",
     3: "Vengeful, description here",
@@ -178,7 +178,6 @@ while run:
         #different emotions giving different buffs
         if emotion_index == 0:
             additional_text = "Excited"
-            happiness_modifier_active = True
         elif emotion_index == 1:
             additional_text = "Nervous"
         elif emotion_index == 2:

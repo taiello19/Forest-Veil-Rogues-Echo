@@ -131,8 +131,8 @@ enemy_turn_text = None
 
 
 #Emotions
-happiness_modifier_active = False
-happy_mode = False
+activate_excited = False
+excited_mode = False
 #-------------------------------------------------------------------------------
  
 
@@ -195,6 +195,7 @@ while run:
         #different emotions giving different buffs
         if emotion_index == 0:
             additional_text = "Excited"
+            activate_excited = True
         elif emotion_index == 1:
             additional_text = "Nervous"
         elif emotion_index == 2:
@@ -292,7 +293,7 @@ while run:
 
     #-------------------------------------------------------------------------------------------------------------------------------------------
     #PLAYER TURN
-
+        
     #Player turn 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -303,6 +304,7 @@ while run:
                 discard_pile.extend(player_hand)
                 player_hand.clear()
                 draw_hand()
+                excited_mode = False
                 turn_active = False
                 player.shield = 0
                 enemy_turn_text = None
@@ -318,7 +320,7 @@ while run:
                 if end_turn_button_rect.collidepoint(event.pos):
                     player.mana = player.max_mana
                     enemy.shield = 0
-                    happy_mode = False
+                    excited_mode = False
                     discard_pile.extend(player_hand)
                     player_hand.clear()
                     draw_hand()
@@ -334,12 +336,27 @@ while run:
                             #deal damage to the enemy
                             effective_damage = selected_card['value'] - enemy.shield
                             enemy.update_shield(-selected_card['value'])
+                            #excited mode
+                            if excited_mode == True:
+                                effective_damage += 1
 
                             if effective_damage > 0:
                                 enemy.update_health(-effective_damage)
+                            if activate_excited == True and not excited_mode:
+                                excited_mode = True
                         elif selected_card['type'] == 'Defend':
                             #add shield to the player
                             player.update_shield(selected_card['value'])
+                        elif selected_card['type'] == 'Self':
+                            print('Self type used')
+                        elif selected_card['type'] == 'SleepDMG':
+                            print('SleepDMG type used')
+                        elif selected_card['type'] == 'Stun':
+                            print('Stun type used')
+                        elif selected_card['type'] == 'Dual':
+                            print('Dual type used')
+                        elif selected_card['type'] == 'SleepBlock':
+                            print('SleepBlock type used')
 
                         #update mana and discard the card
                         player.mana -= selected_card['mana']

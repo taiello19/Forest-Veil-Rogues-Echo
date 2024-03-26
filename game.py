@@ -7,7 +7,6 @@ import sys
 from player import Player
 from enemy import Enemy
 from menu import main_menu
-from cards import create_initial_deck, draw_hand
 pygame.init()
 
 #set the screen variable size
@@ -19,9 +18,9 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 title_font = pygame.font.Font(None, 72)
 font = pygame.font.Font(None, 36)
 
-emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 5)]
+emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 7)]
 emotion_descriptions = {
-    0: "Excited, when playing an attack gain a strength buff for that turn!",
+    0: "Excited, description here",
     1: "Nervous, descriptiion here",
     2: "Depressed, description here",
     3: "Vengeful, description here",
@@ -57,20 +56,20 @@ font = pygame.font.Font(None, 36)
 
 #-------------------------------------------------------------------------------
 #CARDS
-cards = [{'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1}]
+cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'}]
 
 
 draw_pile = list(cards)  #initial draw pile 
@@ -91,8 +90,25 @@ def draw_hand():
         card = draw_pile.pop()
         card['rect'] = pygame.Rect(0, 0, card_width, card_height)  
         player_hand.append(card)
-    
 
+
+
+def add_emotion_cards(deck, emotion_index):
+    emotion_specific_cards = {
+        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
+        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
+        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, {'type': 'Dual', 'value': 8, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
+        3: [{'type': 'Self', 'value': 2, 'mana': 2, 'name': 'Double-Edge'}, {'type': 'Dual', 'value': 6, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
+        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
+        5: [{'type': 'SleepDMG', 'value': 20, 'mana': 0, 'name': 'Sleep Attack'}, {'type': 'SleepBlock', 'value': 2, 'mana': 1, 'name': 'Long Slumber'}],  #tired
+        
+    }
+
+    #add the cards for the selected emotion to the deck
+    if emotion_index in emotion_specific_cards:
+        deck.extend(emotion_specific_cards[emotion_index])
+
+    return deck
 #-------------------------------------------------------------------------------
             
 
@@ -115,12 +131,13 @@ enemy_turn_text = None
 
 
 #Emotions
-happiness_modifier_active = False
-happy_mode = False
+activate_excited = False
+excited_mode = False
 #-------------------------------------------------------------------------------
  
 
 selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions)
+draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)
 
 if selected_emoji_index == -1:
     pygame.quit()
@@ -178,7 +195,7 @@ while run:
         #different emotions giving different buffs
         if emotion_index == 0:
             additional_text = "Excited"
-            happiness_modifier_active = True
+            activate_excited = True
         elif emotion_index == 1:
             additional_text = "Nervous"
         elif emotion_index == 2:
@@ -227,7 +244,7 @@ while run:
         
         if turn_active:
             pygame.draw.rect(screen, (200, 200, 200), card_rect)
-            card_text = font.render(f"{card['type']} {card['value']}", True, (0, 0, 0))
+            card_text = font.render(f"{card['name']} {card['value']}", True, (0, 0, 0))
             screen.blit(card_text, (card_rect.x + 10, card_rect.y + 10))
             
             #display mana value in the top right corner of each card
@@ -276,7 +293,7 @@ while run:
 
     #-------------------------------------------------------------------------------------------------------------------------------------------
     #PLAYER TURN
-
+        
     #Player turn 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -287,6 +304,7 @@ while run:
                 discard_pile.extend(player_hand)
                 player_hand.clear()
                 draw_hand()
+                excited_mode = False
                 turn_active = False
                 player.shield = 0
                 enemy_turn_text = None
@@ -302,7 +320,7 @@ while run:
                 if end_turn_button_rect.collidepoint(event.pos):
                     player.mana = player.max_mana
                     enemy.shield = 0
-                    happy_mode = False
+                    excited_mode = False
                     discard_pile.extend(player_hand)
                     player_hand.clear()
                     draw_hand()
@@ -318,12 +336,27 @@ while run:
                             #deal damage to the enemy
                             effective_damage = selected_card['value'] - enemy.shield
                             enemy.update_shield(-selected_card['value'])
+                            #excited mode
+                            if excited_mode == True:
+                                effective_damage += 1
 
                             if effective_damage > 0:
                                 enemy.update_health(-effective_damage)
+                            if activate_excited == True and not excited_mode:
+                                excited_mode = True
                         elif selected_card['type'] == 'Defend':
                             #add shield to the player
                             player.update_shield(selected_card['value'])
+                        elif selected_card['type'] == 'Self':
+                            print('Self type used')
+                        elif selected_card['type'] == 'SleepDMG':
+                            print('SleepDMG type used')
+                        elif selected_card['type'] == 'Stun':
+                            print('Stun type used')
+                        elif selected_card['type'] == 'Dual':
+                            print('Dual type used')
+                        elif selected_card['type'] == 'SleepBlock':
+                            print('SleepBlock type used')
 
                         #update mana and discard the card
                         player.mana -= selected_card['mana']

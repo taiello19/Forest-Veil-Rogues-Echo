@@ -1,7 +1,7 @@
 import pygame
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x=1000, y=250, health=30):
+    def __init__(self, x=900, y=100, health=30):
         super().__init__()
         self.image = pygame.transform.scale(pygame.image.load('Images/wizard.png'), (400, 400))
         self.rect = self.image.get_rect(topleft=(x, y))

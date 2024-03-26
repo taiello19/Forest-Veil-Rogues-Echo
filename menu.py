@@ -20,16 +20,16 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
 
         # Intro blurb
         welcome_text = font.render("Welcome to the demo of Forest Veil: Rogue's Echo, Please select one of the emotions below and hit play to begin.", True, (0, 0, 0))
-        screen.blit(welcome_text, ((SCREEN_WIDTH - welcome_text.get_width()) // 2, 450))
+        screen.blit(welcome_text, ((SCREEN_WIDTH - welcome_text.get_width()) // 2, 350))
 
         welcome_text2 = font.render("Please note some emotions might not be available as the game is still in development, thank you for your patience!", True, (0, 0, 0))
-        screen.blit(welcome_text2, ((SCREEN_WIDTH - welcome_text.get_width()) // 2, 500))
+        screen.blit(welcome_text2, ((SCREEN_WIDTH - welcome_text.get_width()) // 2, 400))
 
         # Emotion boxes
         for i, emotion_img in enumerate(emotion_images):
             player_box_rect = pygame.Rect(
                 (SCREEN_WIDTH - (len(emotion_images) * (player_box_width + player_box_spacing))) // 2 + i * (player_box_width + player_box_spacing),
-                SCREEN_HEIGHT - player_box_height - 250,
+                SCREEN_HEIGHT - player_box_height - 150,
                 player_box_width,
                 player_box_height
             )
@@ -63,7 +63,7 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
                 for i, _ in enumerate(emotion_images):
                     player_box_rect = pygame.Rect(
                         (SCREEN_WIDTH - (len(emotion_images) * (player_box_width + player_box_spacing))) // 2 + i * (player_box_width + player_box_spacing),
-                        SCREEN_HEIGHT - player_box_height - 250,
+                        SCREEN_HEIGHT - player_box_height - 150,
                         player_box_width,
                         player_box_height
                     )

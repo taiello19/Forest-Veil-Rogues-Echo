@@ -7,7 +7,6 @@ import sys
 from player import Player
 from enemy import Enemy
 from menu import main_menu
-from cards import create_initial_deck, draw_hand
 pygame.init()
 
 #set the screen variable size
@@ -57,20 +56,20 @@ font = pygame.font.Font(None, 36)
 
 #-------------------------------------------------------------------------------
 #CARDS
-cards = [{'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Attack', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1},
-         {'type': 'Defend', 'value': 5, 'mana': 1}]
+cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'}]
 
 
 draw_pile = list(cards)  #initial draw pile 
@@ -91,8 +90,25 @@ def draw_hand():
         card = draw_pile.pop()
         card['rect'] = pygame.Rect(0, 0, card_width, card_height)  
         player_hand.append(card)
-    
 
+
+
+def add_emotion_cards(deck, emotion_index):
+    emotion_specific_cards = {
+        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
+        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
+        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, {'type': 'Dual', 'value': 8, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
+        3: [{'type': 'Self', 'value': 2, 'mana': 2, 'name': 'Double-Edge'}, {'type': 'Dual', 'value': 6, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
+        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
+        5: [{'type': 'SleepDMG', 'value': 20, 'mana': 0, 'name': 'Sleep Attack'}, {'type': 'SleepBlock', 'value': 2, 'mana': 1, 'name': 'Long Slumber'}],  #tired
+        
+    }
+
+    #add the cards for the selected emotion to the deck
+    if emotion_index in emotion_specific_cards:
+        deck.extend(emotion_specific_cards[emotion_index])
+
+    return deck
 #-------------------------------------------------------------------------------
             
 
@@ -121,6 +137,7 @@ happy_mode = False
  
 
 selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions)
+draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)
 
 if selected_emoji_index == -1:
     pygame.quit()
@@ -226,7 +243,7 @@ while run:
         
         if turn_active:
             pygame.draw.rect(screen, (200, 200, 200), card_rect)
-            card_text = font.render(f"{card['type']} {card['value']}", True, (0, 0, 0))
+            card_text = font.render(f"{card['name']} {card['value']}", True, (0, 0, 0))
             screen.blit(card_text, (card_rect.x + 10, card_rect.y + 10))
             
             #display mana value in the top right corner of each card

@@ -10,13 +10,13 @@ from menu import main_menu
 pygame.init()
 
 #set the screen variable size
-SCREEN_WIDTH = 1500
-SCREEN_HEIGHT = 1200
+SCREEN_WIDTH = 1300
+SCREEN_HEIGHT = 800
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 title_font = pygame.font.Font(None, 72)
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 30)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 7)]
 emotion_descriptions = {
@@ -41,15 +41,15 @@ enemy = Enemy()
 
 
 #health bars
-health_bar_width = 200
-health_bar_height = 20
+health_bar_width = 150
+health_bar_height = 15
 
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #MANA
 
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 30)
 
 
 #-------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ discard_pile = []
 player_hand = []
 
 def draw_hand():
-    card_width, card_height = 250, 250  
+    card_width, card_height = 150, 180  
     for _ in range(4):
         if not draw_pile:
             #shuffle discard pile back into draw pile when empty
@@ -119,7 +119,7 @@ turn_active = True
 enemy_turn_active = False
 end_turn_button_rect = pygame.Rect(SCREEN_WIDTH - 150, 10, 140, 40)
 end_turn_button_text = font.render("End Turn", True, (0, 0, 0))
-use_button_rect = pygame.Rect(SCREEN_WIDTH - 300, SCREEN_HEIGHT - 120, 140, 40)
+use_button_rect = pygame.Rect(SCREEN_WIDTH - 180, SCREEN_HEIGHT - 100, 120, 40)
 use_button_text = font.render("Use", True, (0, 0, 0))
 selected_card = None
 
@@ -162,10 +162,9 @@ while run:
     enemy.draw(screen)
 
     #display mana
-    #print(current_mana)
     mana_text = font.render(f"{player.mana}/{player.max_mana}", True, (0, 0, 0))
-    screen.blit(mana_text, (20, SCREEN_HEIGHT - 130))
-    mana_rect = pygame.Rect(10, SCREEN_HEIGHT - 140, 50, 50)
+    screen.blit(mana_text, (20, SCREEN_HEIGHT - 100))
+    mana_rect = pygame.Rect(10, SCREEN_HEIGHT - 110, 50, 50)
     pygame.draw.rect(screen, (0, 0, 0), mana_rect, 2)
 
     #display player's shield and health
@@ -174,10 +173,10 @@ while run:
 
     #enemy shield
     enemy_shield_text = font.render(f"Enemy Shield: {enemy.shield}", True, (0, 0, 0))
-    screen.blit(enemy_shield_text, (SCREEN_WIDTH - 400, enemy.rect.bottom + 70))
+    screen.blit(enemy_shield_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 70))
     
     player_health_bar = pygame.Rect(50, player.rect.bottom + 10, health_bar_width * (player.health / player.max_health), health_bar_height)
-    enemy_health_bar = pygame.Rect(SCREEN_WIDTH - 400 - health_bar_width * (enemy.health / enemy.max_health), enemy.rect.bottom + 10, health_bar_width * (enemy.health / enemy.max_health), health_bar_height)
+    enemy_health_bar = pygame.Rect(SCREEN_WIDTH - 80 - health_bar_width * (enemy.health / enemy.max_health), enemy.rect.bottom + 10, health_bar_width * (enemy.health / enemy.max_health), health_bar_height)
 
     pygame.draw.rect(screen, (0, 255, 0), player_health_bar)
     pygame.draw.rect(screen, (255, 0, 0), enemy_health_bar)
@@ -187,7 +186,7 @@ while run:
 
     #display health values in text
     screen.blit(player_health_text, (50, player.rect.bottom + 40))
-    screen.blit(enemy_health_text, (SCREEN_WIDTH - 400, enemy.rect.bottom + 40))
+    screen.blit(enemy_health_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 40))
 
     #emotion buff in text
     if selected_emoji_index is not None:
@@ -218,15 +217,15 @@ while run:
     #draw pile and discard pile
     draw_pile_text = font.render(f"Draw Pile: {len(draw_pile)}", True, (0, 0, 0))
     discard_pile_text = font.render(f"Discard Pile: {len(discard_pile)}", True, (0, 0, 0))
-    screen.blit(draw_pile_text, (10, SCREEN_HEIGHT - 80))
-    screen.blit(discard_pile_text, (SCREEN_WIDTH - 200, SCREEN_HEIGHT - 80))
+    screen.blit(draw_pile_text, (10, SCREEN_HEIGHT - 40))
+    screen.blit(discard_pile_text, (SCREEN_WIDTH - 180, SCREEN_HEIGHT - 40))
 
     pygame.draw.rect(screen, (100, 200, 100), use_button_rect)
-    screen.blit(use_button_text, (SCREEN_WIDTH - 290, SCREEN_HEIGHT - 110))
+    screen.blit(use_button_text, (SCREEN_WIDTH - 140, SCREEN_HEIGHT - 90))
 
     #card sizes
-    card_width, card_height = 200, 200
-    card_spacing = 20
+    card_width, card_height = 150, 180
+    card_spacing = 15
     total_hand_width = len(player_hand) * card_width + (len(player_hand) - 1) * card_spacing
     start_x = (SCREEN_WIDTH - total_hand_width) // 2
 

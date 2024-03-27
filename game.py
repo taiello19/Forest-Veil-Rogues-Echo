@@ -1,6 +1,7 @@
 import pygame
 import random
 import time
+import math
 from tkinter import *
 from tkinter import messagebox
 import sys
@@ -121,6 +122,7 @@ start_enemy_turn_time = 0
 enemy_turn_duration = 3  #in seconds
 
 enemy_turn_text = None
+system_text = None
 
 #-------------------------------------------------------------------------------
 #Emotions
@@ -134,7 +136,16 @@ stun = False
 
 #Nervous
 activate_nervous = False
+#variables to do dmg 
+nervous_selfdmg = 1
+nervous_dmg = 3
 
+#Depressed
+activate_depressed = False
+damage_taken_last_turn = 0
+
+#Vengeful
+activate_vengeful = False
 #-------------------------------------------------------------------------------
  
 
@@ -205,8 +216,10 @@ while run:
             activate_nervous = True
         elif emotion_index == 2:
             additional_text = "Depressed"
+            activate_depressed = True
         elif emotion_index == 3:
             additional_text = "Vengeful"
+            activate_vengeful = True
         elif emotion_index == 4:
             additional_text = "Optimistic"
         elif emotion_index == 5:
@@ -266,7 +279,7 @@ while run:
 
 
     #display whos turn it is
-    turn_text = font.render("Your Turn" if turn_active else "Enemy Turn", True, (0, 0, 0))
+    turn_text = font.render("Your Turn" if turn_active else "Enemy Turn", True, (255, 255, 255))
     screen.blit(turn_text, ((SCREEN_WIDTH - turn_text.get_width()) // 2, 10))
 
     if turn_active:
@@ -299,6 +312,8 @@ while run:
                 effective_player_damage = max(0, enemy_attack_value - player.shield)
                 player.update_health(-effective_player_damage)
                 player.update_shield(-enemy_attack_value)  
+                #depressed mode
+                damage_taken_last_turn += effective_player_damage
                 enemy_turn_text = "Enemy attacked for 5!"
                 
             else:
@@ -308,14 +323,31 @@ while run:
             
 
     if enemy_turn_text is not None:
-        enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 0, 0)) 
+        enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255)) 
         screen.blit(enemy_turn_text_rendered, ((SCREEN_WIDTH - enemy_turn_text_rendered.get_width()) // 2, 150))
+    
+    if system_text:
+        system_text_rendered = font.render(system_text, True, (255, 255, 255))
+        screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))  
 
-    if turn_active:  # This condition can be adjusted based on your game's flow
+    if turn_active:  
         enemy_turn_text = None
+        system_text = None
     #-------------------------------------------------------------------------------------------------------------------------------------------
     #PLAYER TURN
-        
+    #Depressed mode
+    if activate_depressed and turn_active:
+        shield_to_add = math.ceil(damage_taken_last_turn / 3)
+        player.update_shield(shield_to_add)
+        damage_taken_last_turn = 0  
+
+    if system_text:
+        system_text_rendered = font.render(system_text, True, (255, 255, 255))
+        screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))
+
+    if not turn_active:
+        system_text = None
+    
     #Player turn 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -329,8 +361,7 @@ while run:
                 excited_mode = False
                 turn_active = False
                 player.shield = 0
-                enemy_turn_text = None
-                #remove later
+                system_text = None
                 start_enemy_turn_time = time.time()
             else:
                 #start the player's turn again
@@ -349,6 +380,15 @@ while run:
                     turn_active = False
                     start_enemy_turn_time = time.time()
 
+                    #nervous ability
+                    chance = random.random()
+                    if activate_nervous == True:
+                        if chance < 0.6:
+                            enemy.update_health(-nervous_dmg)
+                            system_text = f'You thrash out and deal {nervous_dmg} damage to the enemy!'
+                        else:
+                            player.update_health(-nervous_selfdmg)
+                            system_text = f'You stub your toe, take {nervous_selfdmg} damage.'
 
                 elif use_button_rect.collidepoint(event.pos):
                     #check if a card is selected

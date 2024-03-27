@@ -7,6 +7,7 @@ import sys
 from player import Player
 from enemy import Enemy
 from menu import main_menu
+from popups import Popups
 pygame.init()
 
 #set the screen variable size
@@ -18,10 +19,10 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 title_font = pygame.font.Font(None, 72)
 font = pygame.font.Font(None, 30)
 
-emotion_images = [pygame.image.load(f'Images/emotion{i}.jpg') for i in range(1, 7)]
+emotion_images = [pygame.image.load(f'Images/emotion{i}.png') for i in range(1, 7)]
 emotion_descriptions = {
     0: "Excited, description here",
-    1: "Nervous, descriptiion here",
+    1: "Nervous, description here",
     2: "Depressed, description here",
     3: "Vengeful, description here",
     4: "Optimistic, description here",
@@ -131,8 +132,12 @@ enemy_turn_text = None
 
 
 #Emotions
+#this shows that emotion class excited has been selected
 activate_excited = False
+#this determines the +1 dmg to atk
 excited_mode = False
+#this allows for the stun card to work
+stun = False
 #-------------------------------------------------------------------------------
  
 
@@ -153,6 +158,9 @@ while run:
 
     key = pygame.key.get_pressed()
     screen.fill((255, 255, 255))
+    background = pygame.image.load('Images/fightbackground.png').convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.blit(background, (0,0))
 
 
 
@@ -267,29 +275,46 @@ while run:
         pygame.draw.rect(screen, (100, 200, 100), end_turn_button_rect)
         screen.blit(end_turn_button_text, (SCREEN_WIDTH - 140, 20))
 
+    show_stun_message = False
+    stun_message_start_time = 0
     #-------------------------------------------------------------------------------------------------------------------------------------------
     #ENEMY TURN
 
-
     #enemy turn
     if not turn_active and enemy_turn_text is None:
-        if random.choice([True, False]):  #simulate enemy's decision to attack or defend
-            enemy_attack_value = 5
-            effective_player_damage = max(0, enemy_attack_value - player.shield)
-            player.update_health(-effective_player_damage)
-            player.update_shield(-enemy_attack_value)  
-            enemy_turn_text = "Enemy attacked for 5!"
+        if stun:
+            #start the stun timer
+            if not show_stun_message:
+                show_stun_message = True
+                stun_message_start_time = pygame.time.get_ticks()
+                enemy_turn_text = "Enemy is stunned for one turn"
             
+            #go to player turn
+            if pygame.time.get_ticks() - stun_message_start_time >= 1000:
+                show_stun_message = False
+                stun = False  
+                turn_active = True  
+                enemy_turn_text = None  
         else:
-            enemy_defend_value = 5
-            enemy.update_shield(enemy_defend_value)
-            enemy_turn_text = "Enemy shielded for 5!"
+            if random.choice([True, False]):  #simulate enemy's decision to attack or defend
+                enemy_attack_value = 5
+                effective_player_damage = max(0, enemy_attack_value - player.shield)
+                player.update_health(-effective_player_damage)
+                player.update_shield(-enemy_attack_value)  
+                enemy_turn_text = "Enemy attacked for 5!"
+                
+            else:
+                enemy_defend_value = 5
+                enemy.update_shield(enemy_defend_value)
+                enemy_turn_text = "Enemy shielded for 5!"
             
 
     if enemy_turn_text is not None:
         enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 0, 0)) 
         screen.blit(enemy_turn_text_rendered, ((SCREEN_WIDTH - enemy_turn_text_rendered.get_width()) // 2, 150))
 
+    if turn_active:  # This condition can be adjusted based on your game's flow
+        enemy_turn_text = None
     #-------------------------------------------------------------------------------------------------------------------------------------------
     #PLAYER TURN
         
@@ -351,7 +376,7 @@ while run:
                         elif selected_card['type'] == 'SleepDMG':
                             print('SleepDMG type used')
                         elif selected_card['type'] == 'Stun':
-                            print('Stun type used')
+                            stun = True
                         elif selected_card['type'] == 'Dual':
                             print('Dual type used')
                         elif selected_card['type'] == 'SleepBlock':
@@ -365,8 +390,8 @@ while run:
 
                     else:
                         #not enough mana message, should be changed to an animation later
-                        Tk().wm_withdraw()
-                        messagebox.showinfo('Not enough Mana!', 'You dont have enough mana to perform this action, please hit "End Turn"')
+                        mana_popup = Popups(screen, 'You dont have enough mana to perform this action, please hit "End Turn"')
+                        mana_popup.show()
                         selected_card = None
 
 

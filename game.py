@@ -119,7 +119,11 @@ def add_emotion_cards(deck, emotion_index):
             
 
 #-------------------------------------------------------------------------------
-#GAME STATE         
+#GAME STATE    
+selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions) 
+draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)  
+random.shuffle(draw_pile)  
+
 draw_hand()  # player draws initial hand
 turn_active = True
 enemy_turn_active = False
@@ -137,9 +141,9 @@ enemy_turn_text = None
 system_text = None
 
 #-------------------------------------------------------------------------------
-#Emotions
+#EMOTIONS
+
 #Excited
-#this shows that emotion class excited has been selected
 activate_excited = False
 #this determines the +1 dmg to atk
 excited_mode = False
@@ -161,9 +165,7 @@ activate_vengeful = False
 vengeful_multiplier = 0.25
 #-------------------------------------------------------------------------------
  
-
-selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions)
-draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)
+#GAME LOOP
 
 if selected_emoji_index == -1:
     pygame.quit()

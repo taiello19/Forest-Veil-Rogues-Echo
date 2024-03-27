@@ -158,6 +158,9 @@ while run:
 
     key = pygame.key.get_pressed()
     screen.fill((255, 255, 255))
+    background = pygame.image.load('Images/fightbackground.png').convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.blit(background, (0,0))
 
 
 

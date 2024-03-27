@@ -16,8 +16,8 @@ SCREEN_HEIGHT = 800
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-title_font = pygame.font.Font(None, 72)
-font = pygame.font.Font(None, 30)
+title_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_2.ttf', 72)
+font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 30)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.png') for i in range(1, 7)]
 emotion_descriptions = {
@@ -44,14 +44,6 @@ enemy = Enemy()
 #health bars
 health_bar_width = 150
 health_bar_height = 15
-
-#-------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------
-#MANA
-
-font = pygame.font.Font(None, 30)
-
 
 #-------------------------------------------------------------------------------
 
@@ -130,14 +122,19 @@ enemy_turn_duration = 3  #in seconds
 
 enemy_turn_text = None
 
-
+#-------------------------------------------------------------------------------
 #Emotions
+#Excited
 #this shows that emotion class excited has been selected
 activate_excited = False
 #this determines the +1 dmg to atk
 excited_mode = False
 #this allows for the stun card to work
 stun = False
+
+#Nervous
+activate_nervous = False
+
 #-------------------------------------------------------------------------------
  
 
@@ -205,6 +202,7 @@ while run:
             activate_excited = True
         elif emotion_index == 1:
             additional_text = "Nervous"
+            activate_nervous = True
         elif emotion_index == 2:
             additional_text = "Depressed"
         elif emotion_index == 3:

@@ -89,12 +89,24 @@ def draw_hand():
 
 def add_emotion_cards(deck, emotion_index):
     emotion_specific_cards = {
-        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
-        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
-        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, {'type': 'Dual', 'value': 8, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
-        3: [{'type': 'Self', 'value': 2, 'mana': 2, 'name': 'Double-Edge'}, {'type': 'Dual', 'value': 6, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
-        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
-        5: [{'type': 'SleepDMG', 'value': 20, 'mana': 0, 'name': 'Sleep Attack'}, {'type': 'SleepBlock', 'value': 2, 'mana': 1, 'name': 'Long Slumber'}],  #tired
+        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, 
+            {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
+
+        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, 
+            {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
+
+        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, 
+            {'type': 'Dual', 'value': 7, 'shield': 3, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
+
+        3: [{'type': 'Self', 'value': 2, 'shield': 6, 'mana': 2, 'name': 'Double-Edge'}, 
+            {'type': 'Dual', 'value': 6, 'shield': 3, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
+
+        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, 
+            {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, 
+            {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
+            
+        5: [{'type': 'SleepDMG', 'value': 20, 'mana': 0, 'name': 'Sleep Attack'}, 
+            {'type': 'SleepBlock', 'value': 2, 'mana': 1, 'name': 'Long Slumber'}],  #tired
         
     }
 
@@ -146,6 +158,7 @@ damage_taken_last_turn = 0
 
 #Vengeful
 activate_vengeful = False
+vengeful_multiplier = 0.25
 #-------------------------------------------------------------------------------
  
 
@@ -312,6 +325,10 @@ while run:
                 effective_player_damage = max(0, enemy_attack_value - player.shield)
                 player.update_health(-effective_player_damage)
                 player.update_shield(-enemy_attack_value)  
+                #vengeful mode
+                vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
+                if effective_player_damage > 0 and activate_vengeful == True:
+                    enemy.update_health(-vengeful_damage)
                 #depressed mode
                 damage_taken_last_turn += effective_player_damage
                 enemy_turn_text = "Enemy attacked for 5!"
@@ -410,13 +427,26 @@ while run:
                             #add shield to the player
                             player.update_shield(selected_card['value'])
                         elif selected_card['type'] == 'Self':
-                            print('Self type used')
+                            player_damage = selected_card['value']
+                            player.update_health(-player_damage)
+                            if activate_vengeful == True:
+                                vengeful_damage = math.ceil(player_damage * (vengeful_multiplier + 1))
+                                effective_damage = vengeful_damage - enemy.shield
+                                enemy.update_shield(-vengeful_damage)
+                                if effective_damage > 0:
+                                    enemy.update_health(-effective_damage)
+                            player.update_shield(selected_card['shield'])
+
                         elif selected_card['type'] == 'SleepDMG':
                             print('SleepDMG type used')
                         elif selected_card['type'] == 'Stun':
                             stun = True
                         elif selected_card['type'] == 'Dual':
-                            print('Dual type used')
+                            effective_damage = selected_card['value'] - enemy.shield
+                            enemy.update_shield(-selected_card['value'])
+                            enemy.update_health(-effective_damage)
+                            shield = selected_card['shield']
+                            player.update_shield(shield)
                         elif selected_card['type'] == 'SleepBlock':
                             print('SleepBlock type used')
 

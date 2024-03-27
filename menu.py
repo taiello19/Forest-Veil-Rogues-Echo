@@ -3,8 +3,8 @@ import sys
 
 def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()
-    player_box_width = 120
-    player_box_height = 120
+    player_box_width = 150
+    player_box_height = 150
     player_box_spacing = 20
     play_button_width = 200
     play_button_height = 80
@@ -13,16 +13,19 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
 
     while in_main_menu:
         screen.fill((255, 255, 255))  # Clear the screen
+        background = pygame.image.load('Images/menubackground.jpg').convert()
+        background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen.blit(background, (0,0))
 
         # Title
-        title_text = title_font.render("Forest Veil: Rogue's Echo", True, (0, 0, 0))
+        title_text = title_font.render("Forest Veil: Rogue's Echo", True, (255, 255, 255))
         screen.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) // 2, 50))
 
         # Intro blurb
-        welcome_text = font.render("Welcome to the demo of Forest Veil: Rogue's Echo, Please select one of the emotions below and hit play to begin.", True, (0, 0, 0))
+        welcome_text = font.render("Welcome to the demo of Forest Veil: Rogue's Echo, Please select one of the emotions below and hit play to begin.", True, (255, 255, 255))
         screen.blit(welcome_text, ((SCREEN_WIDTH - welcome_text.get_width()) // 2, 350))
 
-        welcome_text2 = font.render("Please note some emotions might not be available as the game is still in development, thank you for your patience!", True, (0, 0, 0))
+        welcome_text2 = font.render("Please note some emotions might not be available as the game is still in development, thank you for your patience!", True, (255, 255, 255))
         screen.blit(welcome_text2, ((SCREEN_WIDTH - welcome_text.get_width()) // 2, 400))
 
         # Emotion boxes
@@ -42,7 +45,7 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
 
 
             if player_box_rect.collidepoint(pygame.mouse.get_pos()):
-                description_text = font.render(emotion_descriptions.get(i, "Description not available"), True, (0, 0, 0))
+                description_text = font.render(emotion_descriptions.get(i, "Description not available"), True, (255, 255, 255))
                 screen.blit(description_text, ((SCREEN_WIDTH - description_text.get_width()) // 2, SCREEN_HEIGHT - 100))
 
 

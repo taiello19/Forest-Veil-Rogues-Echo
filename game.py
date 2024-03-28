@@ -1,6 +1,7 @@
 import pygame
 import random
 import time
+import math
 from tkinter import *
 from tkinter import messagebox
 import sys
@@ -16,8 +17,8 @@ SCREEN_HEIGHT = 800
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-title_font = pygame.font.Font(None, 72)
-font = pygame.font.Font(None, 30)
+title_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_2.ttf', 72)
+font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 30)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.png') for i in range(1, 7)]
 emotion_descriptions = {
@@ -36,7 +37,6 @@ player = Player()
 
 
 
-
 #ENEMY
 enemy = Enemy()
 
@@ -44,14 +44,6 @@ enemy = Enemy()
 #health bars
 health_bar_width = 150
 health_bar_height = 15
-
-#-------------------------------------------------------------------------------
-
-#-------------------------------------------------------------------------------
-#MANA
-
-font = pygame.font.Font(None, 30)
-
 
 #-------------------------------------------------------------------------------
 
@@ -79,9 +71,10 @@ discard_pile = []
 
 player_hand = []
 
-def draw_hand():
+def draw_hand(extra_card=False):
     card_width, card_height = 150, 180  
-    for _ in range(4):
+    draw_number = 5 if extra_card else 4
+    for _ in range(draw_number):
         if not draw_pile:
             #shuffle discard pile back into draw pile when empty
             draw_pile.extend(discard_pile)
@@ -96,12 +89,24 @@ def draw_hand():
 
 def add_emotion_cards(deck, emotion_index):
     emotion_specific_cards = {
-        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
-        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
-        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, {'type': 'Dual', 'value': 8, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
-        3: [{'type': 'Self', 'value': 2, 'mana': 2, 'name': 'Double-Edge'}, {'type': 'Dual', 'value': 6, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
-        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
-        5: [{'type': 'SleepDMG', 'value': 20, 'mana': 0, 'name': 'Sleep Attack'}, {'type': 'SleepBlock', 'value': 2, 'mana': 1, 'name': 'Long Slumber'}],  #tired
+        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, 
+            {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
+
+        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, 
+            {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
+
+        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, 
+            {'type': 'Dual', 'value': 7, 'shield': 3, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
+
+        3: [{'type': 'Self', 'value': 2, 'shield': 6, 'mana': 2, 'name': 'Double-Edge'}, 
+            {'type': 'Dual', 'value': 6, 'shield': 3, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
+
+        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, 
+            {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, 
+            {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
+            
+        5: [{'type': 'SleepDMG', 'value': 3, 'mana': 0, 'sleepyTime': 5, 'name': 'Sleep Attack'}, 
+            {'type': 'SleepBlock', 'value': 0, 'mana': 2, 'sleepyTime': 10, 'name': 'Long Slumber'}],  #tired
         
     }
 
@@ -114,8 +119,16 @@ def add_emotion_cards(deck, emotion_index):
             
 
 #-------------------------------------------------------------------------------
-#GAME STATE         
-draw_hand()  # player draws initial hand
+#GAME STATE    
+selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions) 
+draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)  
+random.shuffle(draw_pile)  
+#optimistic extra draw
+if selected_emoji_index == 4:
+    draw_hand(extra_card=True)
+else:
+    draw_hand()  # player draws initial hand
+
 turn_active = True
 enemy_turn_active = False
 end_turn_button_rect = pygame.Rect(SCREEN_WIDTH - 150, 10, 140, 40)
@@ -129,20 +142,42 @@ start_enemy_turn_time = 0
 enemy_turn_duration = 3  #in seconds
 
 enemy_turn_text = None
+system_text = None
+sleep_text = None
 
+#-------------------------------------------------------------------------------
+#EMOTIONS
 
-#Emotions
-#this shows that emotion class excited has been selected
+#Excited
 activate_excited = False
 #this determines the +1 dmg to atk
 excited_mode = False
 #this allows for the stun card to work
 stun = False
+
+#Nervous
+activate_nervous = False
+#variables to do dmg 
+nervous_selfdmg = 1
+nervous_dmg = 3
+
+#Depressed
+activate_depressed = False
+damage_taken_last_turn = 0
+
+#Vengeful
+activate_vengeful = False
+vengeful_multiplier = 0.25
+
+#Optimistic
+activate_optimistic = False
+
+#Tired
+activate_tired = False
+sleep = 0
 #-------------------------------------------------------------------------------
  
-
-selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions)
-draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)
+#GAME LOOP
 
 if selected_emoji_index == -1:
     pygame.quit()
@@ -161,9 +196,6 @@ while run:
     background = pygame.image.load('Images/fightbackground.png').convert()
     background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(background, (0,0))
-
-
-
 
     #display players
     player.draw(screen)
@@ -205,14 +237,18 @@ while run:
             activate_excited = True
         elif emotion_index == 1:
             additional_text = "Nervous"
+            activate_nervous = True
         elif emotion_index == 2:
             additional_text = "Depressed"
+            activate_depressed = True
         elif emotion_index == 3:
             additional_text = "Vengeful"
+            activate_vengeful = True
         elif emotion_index == 4:
             additional_text = "Optimistic"
         elif emotion_index == 5:
             additional_text = "Tired"
+            activate_tired == True
         else:
             additional_text = "Woopsie, something messed up, you shouldn't be here!!"
             #add code to kick them to main menu
@@ -268,7 +304,7 @@ while run:
 
 
     #display whos turn it is
-    turn_text = font.render("Your Turn" if turn_active else "Enemy Turn", True, (0, 0, 0))
+    turn_text = font.render("Your Turn" if turn_active else "Enemy Turn", True, (255, 255, 255))
     screen.blit(turn_text, ((SCREEN_WIDTH - turn_text.get_width()) // 2, 10))
 
     if turn_active:
@@ -288,6 +324,7 @@ while run:
                 show_stun_message = True
                 stun_message_start_time = pygame.time.get_ticks()
                 enemy_turn_text = "Enemy is stunned for one turn"
+                stun = False
             
             #go to player turn
             if pygame.time.get_ticks() - stun_message_start_time >= 1000:
@@ -301,6 +338,12 @@ while run:
                 effective_player_damage = max(0, enemy_attack_value - player.shield)
                 player.update_health(-effective_player_damage)
                 player.update_shield(-enemy_attack_value)  
+                #vengeful mode
+                vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
+                if effective_player_damage > 0 and activate_vengeful == True:
+                    enemy.update_health(-vengeful_damage)
+                #depressed mode
+                damage_taken_last_turn += effective_player_damage
                 enemy_turn_text = "Enemy attacked for 5!"
                 
             else:
@@ -309,20 +352,39 @@ while run:
                 enemy_turn_text = "Enemy shielded for 5!"
             
 
-    if enemy_turn_text is not None:
-        enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 0, 0)) 
+    if enemy_turn_text:
+        enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255)) 
         screen.blit(enemy_turn_text_rendered, ((SCREEN_WIDTH - enemy_turn_text_rendered.get_width()) // 2, 150))
+    
+    if system_text:
+        system_text_rendered = font.render(system_text, True, (255, 255, 255))
+        screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))  
 
-    if turn_active:  # This condition can be adjusted based on your game's flow
+    if turn_active:  
         enemy_turn_text = None
+        system_text = None
     #-------------------------------------------------------------------------------------------------------------------------------------------
     #PLAYER TURN
-        
+    #Depressed mode
+    if activate_depressed and turn_active:
+        shield_to_add = math.ceil(damage_taken_last_turn / 3)
+        player.update_shield(shield_to_add)
+        damage_taken_last_turn = 0  
+
+    if system_text is not None:
+        system_text_rendered = font.render(system_text, True, (255, 255, 255))
+        screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))
+    
+    if not turn_active and sleep_text:
+        sleep_text = None
+
+    if not turn_active and activate_depressed:
+        system_text = None
+    
     #Player turn 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-
             if turn_active:
                 #discard players hand and draw new cards
                 discard_pile.extend(player_hand)
@@ -331,8 +393,7 @@ while run:
                 excited_mode = False
                 turn_active = False
                 player.shield = 0
-                enemy_turn_text = None
-                #remove later
+                system_text = None
                 start_enemy_turn_time = time.time()
             else:
                 #start the player's turn again
@@ -351,6 +412,15 @@ while run:
                     turn_active = False
                     start_enemy_turn_time = time.time()
 
+                    #nervous ability
+                    chance = random.random()
+                    if activate_nervous == True:
+                        if chance < 0.6:
+                            enemy.update_health(-nervous_dmg)
+                            system_text = f'You thrash out and deal {nervous_dmg} damage to the enemy!'
+                        else:
+                            player.update_health(-nervous_selfdmg)
+                            system_text = f'You stub your toe, take {nervous_selfdmg} damage.'
 
                 elif use_button_rect.collidepoint(event.pos):
                     #check if a card is selected
@@ -372,15 +442,36 @@ while run:
                             #add shield to the player
                             player.update_shield(selected_card['value'])
                         elif selected_card['type'] == 'Self':
-                            print('Self type used')
+                            player_damage = selected_card['value']
+                            player.update_health(-player_damage)
+                            if activate_vengeful == True:
+                                vengeful_damage = math.ceil(player_damage * (vengeful_multiplier + 1))
+                                effective_damage = vengeful_damage - enemy.shield
+                                enemy.update_shield(-vengeful_damage)
+                                if effective_damage > 0:
+                                    enemy.update_health(-effective_damage)
+                            player.update_shield(selected_card['shield'])
+
                         elif selected_card['type'] == 'SleepDMG':
-                            print('SleepDMG type used')
+                            effective_damage = selected_card['value'] - enemy.shield
+                            enemy.update_shield(-selected_card['value'])
+                            enemy.update_health(-effective_damage)
+                            restore = selected_card['sleepyTime']
+                            player.update_health(restore)
+                            sleep_text = f'You restored {restore} health!'
+
                         elif selected_card['type'] == 'Stun':
                             stun = True
                         elif selected_card['type'] == 'Dual':
-                            print('Dual type used')
+                            effective_damage = selected_card['value'] - enemy.shield
+                            enemy.update_shield(-selected_card['value'])
+                            enemy.update_health(-effective_damage)
+                            shield = selected_card['shield']
+                            player.update_shield(shield)
                         elif selected_card['type'] == 'SleepBlock':
-                            print('SleepBlock type used')
+                            restore = selected_card['sleepyTime']
+                            player.update_health(restore)
+                            sleep_text = f'You restored {restore} health!'
 
                         #update mana and discard the card
                         player.mana -= selected_card['mana']
@@ -415,6 +506,12 @@ while run:
             enemy_turn_text = None
             start_enemy_turn_time = 0
     
+    if sleep_text:
+        x = player.rect.centerx - font.size(sleep_text)[0] / 2
+        y = player.rect.top - 20 
+        rendered_text = font.render(sleep_text, True, (255, 255, 255))
+        screen.blit(rendered_text, (x, y))
+
     if enemy.health <= 0:
         screen.fill((255, 255, 255))  #clear the screen
         victory_text = font.render("Enemy Defeated! Click the 'X' in the top right to exit!", True, (0, 0, 0))

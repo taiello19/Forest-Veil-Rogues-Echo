@@ -18,7 +18,7 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
         screen.blit(background, (0,0))
 
         # Title
-        title_text = title_font.render("Forest Veil: Rogue's Echo", True, (255, 255, 255))
+        title_text = title_font.render("Forest Veil: Rogue's Echo", True, (0, 0, 0))
         screen.blit(title_text, ((SCREEN_WIDTH - title_text.get_width()) // 2, 50))
 
         # Intro blurb
@@ -54,7 +54,7 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
         pygame.draw.rect(screen, (100, 200, 100) if selected_emoji_index != -1 else (150, 150, 150), play_button_rect)
 
         play_button_text = title_font.render("Play", True, (0, 0, 0))
-        screen.blit(play_button_text, (play_button_rect.x + 20, play_button_rect.y + 20))
+        screen.blit(play_button_text, (play_button_rect.x + 40, play_button_rect.y + 0))
 
         pygame.display.flip()
 

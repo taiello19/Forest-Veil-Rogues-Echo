@@ -37,7 +37,6 @@ player = Player()
 
 
 
-
 #ENEMY
 enemy = Enemy()
 
@@ -72,9 +71,10 @@ discard_pile = []
 
 player_hand = []
 
-def draw_hand():
+def draw_hand(extra_card=False):
     card_width, card_height = 150, 180  
-    for _ in range(4):
+    draw_number = 5 if extra_card else 4
+    for _ in range(draw_number):
         if not draw_pile:
             #shuffle discard pile back into draw pile when empty
             draw_pile.extend(discard_pile)
@@ -105,8 +105,8 @@ def add_emotion_cards(deck, emotion_index):
             {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, 
             {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
             
-        5: [{'type': 'SleepDMG', 'value': 20, 'mana': 0, 'name': 'Sleep Attack'}, 
-            {'type': 'SleepBlock', 'value': 2, 'mana': 1, 'name': 'Long Slumber'}],  #tired
+        5: [{'type': 'SleepDMG', 'value': 3, 'mana': 0, 'sleepyTime': 5, 'name': 'Sleep Attack'}, 
+            {'type': 'SleepBlock', 'value': 0, 'mana': 2, 'sleepyTime': 10, 'name': 'Long Slumber'}],  #tired
         
     }
 
@@ -123,8 +123,12 @@ def add_emotion_cards(deck, emotion_index):
 selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions) 
 draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)  
 random.shuffle(draw_pile)  
+#optimistic extra draw
+if selected_emoji_index == 4:
+    draw_hand(extra_card=True)
+else:
+    draw_hand()  # player draws initial hand
 
-draw_hand()  # player draws initial hand
 turn_active = True
 enemy_turn_active = False
 end_turn_button_rect = pygame.Rect(SCREEN_WIDTH - 150, 10, 140, 40)
@@ -139,6 +143,7 @@ enemy_turn_duration = 3  #in seconds
 
 enemy_turn_text = None
 system_text = None
+sleep_text = None
 
 #-------------------------------------------------------------------------------
 #EMOTIONS
@@ -163,6 +168,13 @@ damage_taken_last_turn = 0
 #Vengeful
 activate_vengeful = False
 vengeful_multiplier = 0.25
+
+#Optimistic
+activate_optimistic = False
+
+#Tired
+activate_tired = False
+sleep = 0
 #-------------------------------------------------------------------------------
  
 #GAME LOOP
@@ -184,9 +196,6 @@ while run:
     background = pygame.image.load('Images/fightbackground.png').convert()
     background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(background, (0,0))
-
-
-
 
     #display players
     player.draw(screen)
@@ -239,6 +248,7 @@ while run:
             additional_text = "Optimistic"
         elif emotion_index == 5:
             additional_text = "Tired"
+            activate_tired == True
         else:
             additional_text = "Woopsie, something messed up, you shouldn't be here!!"
             #add code to kick them to main menu
@@ -314,6 +324,7 @@ while run:
                 show_stun_message = True
                 stun_message_start_time = pygame.time.get_ticks()
                 enemy_turn_text = "Enemy is stunned for one turn"
+                stun = False
             
             #go to player turn
             if pygame.time.get_ticks() - stun_message_start_time >= 1000:
@@ -341,7 +352,7 @@ while run:
                 enemy_turn_text = "Enemy shielded for 5!"
             
 
-    if enemy_turn_text is not None:
+    if enemy_turn_text:
         enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255)) 
         screen.blit(enemy_turn_text_rendered, ((SCREEN_WIDTH - enemy_turn_text_rendered.get_width()) // 2, 150))
     
@@ -360,18 +371,20 @@ while run:
         player.update_shield(shield_to_add)
         damage_taken_last_turn = 0  
 
-    if system_text:
+    if system_text is not None:
         system_text_rendered = font.render(system_text, True, (255, 255, 255))
         screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))
+    
+    if not turn_active and sleep_text:
+        sleep_text = None
 
-    if not turn_active:
+    if not turn_active and activate_depressed:
         system_text = None
     
     #Player turn 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-
             if turn_active:
                 #discard players hand and draw new cards
                 discard_pile.extend(player_hand)
@@ -440,7 +453,13 @@ while run:
                             player.update_shield(selected_card['shield'])
 
                         elif selected_card['type'] == 'SleepDMG':
-                            print('SleepDMG type used')
+                            effective_damage = selected_card['value'] - enemy.shield
+                            enemy.update_shield(-selected_card['value'])
+                            enemy.update_health(-effective_damage)
+                            restore = selected_card['sleepyTime']
+                            player.update_health(restore)
+                            sleep_text = f'You restored {restore} health!'
+
                         elif selected_card['type'] == 'Stun':
                             stun = True
                         elif selected_card['type'] == 'Dual':
@@ -450,7 +469,9 @@ while run:
                             shield = selected_card['shield']
                             player.update_shield(shield)
                         elif selected_card['type'] == 'SleepBlock':
-                            print('SleepBlock type used')
+                            restore = selected_card['sleepyTime']
+                            player.update_health(restore)
+                            sleep_text = f'You restored {restore} health!'
 
                         #update mana and discard the card
                         player.mana -= selected_card['mana']
@@ -485,6 +506,12 @@ while run:
             enemy_turn_text = None
             start_enemy_turn_time = 0
     
+    if sleep_text:
+        x = player.rect.centerx - font.size(sleep_text)[0] / 2
+        y = player.rect.top - 20 
+        rendered_text = font.render(sleep_text, True, (255, 255, 255))
+        screen.blit(rendered_text, (x, y))
+
     if enemy.health <= 0:
         screen.fill((255, 255, 255))  #clear the screen
         victory_text = font.render("Enemy Defeated! Click the 'X' in the top right to exit!", True, (0, 0, 0))

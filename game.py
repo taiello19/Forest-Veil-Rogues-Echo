@@ -38,8 +38,11 @@ player = Player()
 
 
 #ENEMY
-enemy = Enemy()
-
+enemy_types = ["wizard", "caveman", "wraith"]
+enemy_type = random.choice(enemy_types)
+enemy = Enemy(enemy_type)
+#enemy_types.remove(enemy_type)
+#print(enemy_types)
 
 #health bars
 health_bar_width = 150
@@ -334,7 +337,7 @@ while run:
                 enemy_turn_text = None  
         else:
             if random.choice([True, False]):  #simulate enemy's decision to attack or defend
-                enemy_attack_value = 5
+                enemy_attack_value = enemy.damage
                 effective_player_damage = max(0, enemy_attack_value - player.shield)
                 player.update_health(-effective_player_damage)
                 player.update_shield(-enemy_attack_value)  
@@ -349,7 +352,7 @@ while run:
             else:
                 enemy_defend_value = 5
                 enemy.update_shield(enemy_defend_value)
-                enemy_turn_text = "Enemy shielded for 5!"
+                enemy_turn_text = f'Enemy shielded for {enemy_defend_value}!'
             
 
     if enemy_turn_text:

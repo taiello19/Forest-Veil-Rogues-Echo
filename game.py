@@ -9,6 +9,8 @@ from player import Player
 from enemy import Enemy
 from menu import main_menu
 from popups import Popups
+from map import Map
+from map import MapNode
 pygame.init()
 
 #set the screen variable size
@@ -125,7 +127,7 @@ def add_emotion_cards(deck, emotion_index):
 #GAME STATE    
 selected_emoji_index = main_menu(screen, title_font, font, emotion_images, emotion_descriptions) 
 draw_pile = add_emotion_cards(draw_pile, selected_emoji_index)  
-random.shuffle(draw_pile)  
+random.shuffle(draw_pile)
 #optimistic extra draw
 if selected_emoji_index == 4:
     draw_hand(extra_card=True)
@@ -199,6 +201,7 @@ while run:
     background = pygame.image.load('Images/fightbackground.png').convert()
     background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(background, (0,0))
+
 
     #display players
     player.draw(screen)

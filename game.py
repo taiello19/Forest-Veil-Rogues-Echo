@@ -580,7 +580,6 @@ while run:
                 print(enemy_types)
                 enemy = Enemy(enemy_type)
 
-
             #print(f"Current Level: {level_count+1}")
             #print(f"Selected Enemy Type: {enemy_type}")
             #print(f"Enemy Types Available: {enemy_types[level_count]}")

@@ -188,26 +188,46 @@ if selected_emoji_index == -1:
     pygame.quit()
     sys.exit()
 
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+clock = pygame.time.Clock()
+map = Map()
+map.generate_map()
+nodeVar = False
+
 run = True
 while run:
 
-    #Main Menu
+    #Map
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
-    key = pygame.key.get_pressed()
-    screen.fill((255, 255, 255))
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            map.handle_click(pygame.mouse.get_pos())
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                # Toggle the display_map attribute to show the map again
+                map.display_map = True
+
+            screen.fill((255, 255, 255))
+
+    if map.display_map:
+        map.render(screen, pygame.mouse.get_pos())
+    pygame.display.flip()
+    clock.tick(60)
+
+
     background = pygame.image.load('Images/fightbackground.png').convert()
     background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(background, (0,0))
 
 
-    #display players
+        #display players
     player.draw(screen)
     enemy.draw(screen)
 
-    #display mana
+        #display mana
     mana_text = font.render(f"{player.mana}/{player.max_mana}", True, (0, 0, 0))
     screen.blit(mana_text, (20, SCREEN_HEIGHT - 100))
     mana_rect = pygame.Rect(10, SCREEN_HEIGHT - 110, 50, 50)
@@ -220,7 +240,7 @@ while run:
     #enemy shield
     enemy_shield_text = font.render(f"Enemy Shield: {enemy.shield}", True, (0, 0, 0))
     screen.blit(enemy_shield_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 70))
-    
+
     player_health_bar = pygame.Rect(50, player.rect.bottom + 10, health_bar_width * (player.health / player.max_health), health_bar_height)
     enemy_health_bar = pygame.Rect(SCREEN_WIDTH - 80 - health_bar_width * (enemy.health / enemy.max_health), enemy.rect.bottom + 10, health_bar_width * (enemy.health / enemy.max_health), health_bar_height)
 
@@ -262,7 +282,7 @@ while run:
         #display the text
         additional_text_rendered = font.render(additional_text, True, (0, 0, 0))
         screen.blit(additional_text_rendered, (50, player.rect.bottom + 100))
-    
+
 
     #draw pile and discard pile
     draw_pile_text = font.render(f"Draw Pile: {len(draw_pile)}", True, (0, 0, 0))
@@ -290,19 +310,19 @@ while run:
         if card == selected_card:
             pygame.draw.rect(screen, (255, 255, 0), card_rect, 3)
             card_rect.y -= 5
-        
+
         if turn_active:
             pygame.draw.rect(screen, (200, 200, 200), card_rect)
             card_text = font.render(f"{card['name']} {card['value']}", True, (0, 0, 0))
             screen.blit(card_text, (card_rect.x + 10, card_rect.y + 10))
-            
+
             #display mana value in the top right corner of each card
             mana_text = font.render(str(card['mana']), True, (0, 0, 0))
-            
+
             circle = pygame.Rect(card_rect.x + card_rect.width - 30, card_rect.y + 5, 24, 24)
-            
+
             pygame.draw.ellipse(screen, (0, 0, 0), circle, 2)
-            
+
             #display mana value
             screen.blit(mana_text, (card_rect.x + card_rect.width - 25, card_rect.y + 5))
 
@@ -331,19 +351,19 @@ while run:
                 stun_message_start_time = pygame.time.get_ticks()
                 enemy_turn_text = "Enemy is stunned for one turn"
                 stun = False
-            
+
             #go to player turn
             if pygame.time.get_ticks() - stun_message_start_time >= 1000:
                 show_stun_message = False
-                stun = False  
-                turn_active = True  
-                enemy_turn_text = None  
+                stun = False
+                turn_active = True
+                enemy_turn_text = None
         else:
             if random.choice([True, False]):  #simulate enemy's decision to attack or defend
                 enemy_attack_value = enemy.damage
                 effective_player_damage = max(0, enemy_attack_value - player.shield)
                 player.update_health(-effective_player_damage)
-                player.update_shield(-enemy_attack_value)  
+                player.update_shield(-enemy_attack_value)
                 #vengeful mode
                 vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
                 if effective_player_damage > 0 and activate_vengeful == True:
@@ -351,22 +371,22 @@ while run:
                 #depressed mode
                 damage_taken_last_turn += effective_player_damage
                 enemy_turn_text = "Enemy attacked for 5!"
-                
+
             else:
                 enemy_defend_value = 5
                 enemy.update_shield(enemy_defend_value)
                 enemy_turn_text = f'Enemy shielded for {enemy_defend_value}!'
-            
+
 
     if enemy_turn_text:
-        enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255)) 
+        enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255))
         screen.blit(enemy_turn_text_rendered, ((SCREEN_WIDTH - enemy_turn_text_rendered.get_width()) // 2, 150))
-    
+
     if system_text:
         system_text_rendered = font.render(system_text, True, (255, 255, 255))
-        screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))  
+        screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))
 
-    if turn_active:  
+    if turn_active:
         enemy_turn_text = None
         system_text = None
     #-------------------------------------------------------------------------------------------------------------------------------------------
@@ -375,19 +395,19 @@ while run:
     if activate_depressed and turn_active:
         shield_to_add = math.ceil(damage_taken_last_turn / 3)
         player.update_shield(shield_to_add)
-        damage_taken_last_turn = 0  
+        damage_taken_last_turn = 0
 
     if system_text is not None:
         system_text_rendered = font.render(system_text, True, (255, 255, 255))
         screen.blit(system_text_rendered, ((SCREEN_WIDTH - system_text_rendered.get_width()) // 2, 180))
-    
+
     if not turn_active and sleep_text:
         sleep_text = None
 
     if not turn_active and activate_depressed:
         system_text = None
-    
-    #Player turn 
+
+    #Player turn
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -502,7 +522,7 @@ while run:
                             elif selected_card == card:
                                 selected_card = None
 
-        
+
 
     #check if it's the enemys turn and end after X seconds
     if not turn_active and enemy_turn_text is not None:
@@ -511,18 +531,18 @@ while run:
             player.shield = 0
             enemy_turn_text = None
             start_enemy_turn_time = 0
-    
+
     if sleep_text:
         x = player.rect.centerx - font.size(sleep_text)[0] / 2
-        y = player.rect.top - 20 
+        y = player.rect.top - 20
         rendered_text = font.render(sleep_text, True, (255, 255, 255))
         screen.blit(rendered_text, (x, y))
 
     if enemy.health <= 0:
-        screen.fill((255, 255, 255))  #clear the screen
-        victory_text = font.render("Enemy Defeated! Click the 'X' in the top right to exit!", True, (0, 0, 0))
-        screen.blit(victory_text, ((SCREEN_WIDTH - victory_text.get_width()) // 2, SCREEN_HEIGHT // 2))
-
+        # screen.fill((255, 255, 255))  #clear the screen
+        # victory_text = font.render("Enemy Defeated! Click the 'X' in the top right to exit!", True, (0, 0, 0))
+        # screen.blit(victory_text, ((SCREEN_WIDTH - victory_text.get_width()) // 2, SCREEN_HEIGHT // 2))
+        map.display_map = True
 
 
 

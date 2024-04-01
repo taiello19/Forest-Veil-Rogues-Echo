@@ -2,6 +2,8 @@ import pygame
 
 SCREEN_WIDTH = 1300
 SCREEN_HEIGHT = 800
+GREEN = (0, 255, 0)
+
 
 class MapNode:
     def __init__(self, position):
@@ -22,8 +24,10 @@ class MapNode:
 
         # Render the node on the screen
         if self.visited:
-            pygame.draw.line(screen, (255, 0, 0), (self.position[0] - 20, self.position[1] - 20), (self.position[0] + 20, self.position[1] + 20), 2)
-            pygame.draw.line(screen, (255, 0, 0), (self.position[0] - 20, self.position[1] + 20), (self.position[0] + 20, self.position[1] - 20), 2)
+            pygame.draw.line(screen, (255, 0, 0), (self.position[0] - 20, self.position[1] - 20),
+                             (self.position[0] + 20, self.position[1] + 20), 2)
+            pygame.draw.line(screen, (255, 0, 0), (self.position[0] - 20, self.position[1] + 20),
+                             (self.position[0] + 20, self.position[1] - 20), 2)
         else:
             pygame.draw.circle(screen, (255, 255, 255), self.position, 20)
             pygame.draw.circle(screen, (0, 0, 0), self.position, 20, 2)
@@ -39,6 +43,8 @@ class MapNode:
 class Map:
     def __init__(self):
         self.nodes = []
+        self.groups = {}  # Dictionary to store nodes grouped by connected components
+        self.display_map = True
 
     def add_node(self, node):
         self.nodes.append(node)
@@ -53,53 +59,47 @@ class Map:
         start_node2 = MapNode((150, 400))
         start_node3 = MapNode((150, 600))
 
-        battle_node1 = MapNode((250,200))
-        battle_node2 = MapNode((250,300))
-        battle_node3 = MapNode((250,500))
-        battle_node4 = MapNode((250,600))
+        battle_node1 = MapNode((250, 200))
+        battle_node2 = MapNode((250, 300))
+        battle_node3 = MapNode((250, 500))
+        battle_node4 = MapNode((250, 600))
 
-        battle_node5 = MapNode((350,225))
-        battle_node6 = MapNode((350,350))
-        battle_node7 = MapNode((350,515))
+        battle_node5 = MapNode((350, 225))
+        battle_node6 = MapNode((350, 350))
+        battle_node7 = MapNode((350, 515))
 
-        battle_node8 = MapNode((450,100))
-        battle_node9 = MapNode((450,200))
-        battle_node10 = MapNode((450,400))
-        battle_node11 = MapNode((450,500))
-        battle_node12 = MapNode((450,700))
+        battle_node8 = MapNode((450, 100))
+        battle_node9 = MapNode((450, 200))
+        battle_node10 = MapNode((450, 400))
+        battle_node11 = MapNode((450, 500))
+        battle_node12 = MapNode((450, 700))
 
-
-        battle_node13 = MapNode((550,150))
+        battle_node13 = MapNode((550, 150))
         battle_node14 = MapNode((550, 300))
         battle_node15 = MapNode((550, 450))
         battle_node16 = MapNode((550, 700))
 
-
-        battle_node17 = MapNode((650,150))
+        battle_node17 = MapNode((650, 150))
         battle_node18 = MapNode((650, 250))
         battle_node19 = MapNode((650, 350))
         battle_node20 = MapNode((650, 450))
         battle_node21 = MapNode((650, 550))
         battle_node22 = MapNode((650, 700))
 
-
         battle_node23 = MapNode((750, 100))
-        battle_node24 = MapNode((750,250))
+        battle_node24 = MapNode((750, 250))
         battle_node25 = MapNode((750, 400))
         battle_node26 = MapNode((750, 550))
         battle_node27 = MapNode((750, 700))
 
-        battle_node28 = MapNode((850,175))
+        battle_node28 = MapNode((850, 175))
         battle_node29 = MapNode((850, 350))
         battle_node30 = MapNode((850, 500))
         battle_node31 = MapNode((850, 675))
 
-
-        battle_node32 = MapNode((950,250))
+        battle_node32 = MapNode((950, 250))
         battle_node33 = MapNode((950, 400))
         battle_node34 = MapNode((950, 600))
-
-
 
         self.add_node(start_node1)
         self.add_node(start_node2)
@@ -138,11 +138,6 @@ class Map:
         self.add_node(battle_node32)
         self.add_node(battle_node33)
         self.add_node(battle_node34)
-
-
-
-
-
 
         # Create end node on the right side
         end_node_position = (SCREEN_WIDTH - 150, SCREEN_HEIGHT // 2)
@@ -205,16 +200,33 @@ class Map:
         self.connect_nodes(battle_node30, battle_node34)
         self.connect_nodes(battle_node31, battle_node34)
 
-
-
-
         self.connect_nodes(battle_node32, end_node)
         self.connect_nodes(battle_node33, end_node)
         self.connect_nodes(battle_node34, end_node)
 
-    def render(self, screen, mouse_pos):
+        self.find_connected_components()
+
+    def find_connected_components(self):
+        """
+        Find connected components in the map and store them in the groups dictionary.
+        """
+        visited = set()
         for node in self.nodes:
-            node.render(screen, mouse_pos)
+            if node not in visited:
+                group = set()
+                self.dfs(node, visited, group)
+                if group:
+                    self.groups[node] = group
+
+    def dfs(self, node, visited, group):
+        """
+        Depth-first search to find connected components.
+        """
+        visited.add(node)
+        group.add(node)
+        for neighbor in node.connected_nodes:
+            if neighbor not in visited:
+                self.dfs(neighbor, visited, group)
 
     def handle_click(self, mouse_pos):
         clicked_node = None
@@ -224,19 +236,35 @@ class Map:
                 break
 
         if clicked_node:
-            # Mark the clicked node as visited
-            clicked_node.visited = True
+            print("Selected node:", clicked_node.position)  # Display the selected node's position in the terminal
 
-            # Mark the nodes to the left of the clicked node as visited
+            # Check if the clicked node is in a group
+            for group_leader, group in self.groups.items():
+                if clicked_node in group:
+                    # Disable selection for all nodes in the same group
+                    for node_in_group in group:
+                        node_in_group.visited = True
+
+                    # Enable selection for nodes connected to the clicked node and on the right
+                    for neighbor in clicked_node.connected_nodes:
+                        if neighbor.position[0] > clicked_node.position[0]:
+                            neighbor.visited = False
+                    break
+
+            # Toggle the display_map variable to hide the map
+            self.display_map = True
+
+    def render(self, screen, mouse_pos):
+        if self.display_map:  # Render the map only if display_map is True
             for node in self.nodes:
-                if node.position[0] < clicked_node.position[0]:
-                    node.visited = True
+                node.render(screen, mouse_pos)
 
 # Example usage:
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
+# Create map object
 map = Map()
 map.generate_map()
 
@@ -245,11 +273,20 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            map.handle_click(pygame.mouse.get_pos())
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Handle mouse clicks
+            if event.button == 1:
+                map.handle_click(pygame.mouse.get_pos())
+        elif event.type == pygame.KEYDOWN:
+            # Toggle map visibility with space key
+            if event.key == pygame.K_SPACE:
+                map.display_map = not map.display_map
 
-    screen.fill((255, 255, 255))
+    screen.fill(GREEN)  # Fill screen with green color
+
+    # Render the map
     map.render(screen, pygame.mouse.get_pos())
+
     pygame.display.flip()
     clock.tick(60)
 

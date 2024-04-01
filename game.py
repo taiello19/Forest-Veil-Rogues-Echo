@@ -38,10 +38,10 @@ player = Player()
 
 
 #ENEMY
-enemy_types = ["wizard", "caveman", "wraith"]
-enemy_type = random.choice(enemy_types)
-enemy = Enemy("bees")
-#enemy_types.remove(enemy_type)
+enemy_types = [["spider", "caveman", "bat","goop", "crab"],["bee2","orc","crabduo", "wraith","craggle"],["bees","terrorbird", "orcduo", "wraithtrio","wizard"]]
+enemy_type = random.choice(enemy_types[0])
+enemy = Enemy(enemy_type)
+#enemy_types[0].remove(enemy_type)
 #print(enemy_types)
 
 #health bars

@@ -9,15 +9,15 @@ class Enemy(pygame.sprite.Sprite):
         "bees": {"max_health": 50, "max_shield": 5,"damage": 7,"defend": 5,"dot":6, "dot_duration":3, "reduction": 0},
         "wizard": {"max_health": 50, "max_shield": 20,"damage": 24,"defend": 8,"dot":0, "dot_duration":0, "reduction": 0},
         "wraith": {"max_health": 20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
-        "caveman": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
-        "crab": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
+        "caveman": {"max_health": 20, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
+        "crab": {"max_health": 20, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
         "bat": {"max_health": 30, "max_shield": 0,"damage": 6,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0},
         "warrior": {"max_health": 80, "max_shield": 30,"damage": 12,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
         "demon": {"max_health": 100, "max_shield": 50,"damage": 12,"defend": 6,"dot":4, "dot_duration":2, "reduction": 0.2},
         "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0},
         "bigbird": {"max_health": 90, "max_shield": 20,"damage": 12,"defend": 4,"dot":3, "dot_duration":2, "reduction": 0},
         "orcduo": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
-        "goop": {"max_health": 40, "max_shield": 5,"damage": 10,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0.1}
+        "goop": {"max_health": 20, "max_shield": 5,"damage": 10,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0.1}
     }
 
     def __init__(self, enemy_type, x=900, y=100):

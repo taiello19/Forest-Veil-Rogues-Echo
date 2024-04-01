@@ -40,11 +40,15 @@ player = Player()
 
 
 #ENEMY
-enemy_types = [["spider", "caveman", "bat","goop", "crab"],["bee2","orc","crabduo", "wraith","craggle"],["bees","terrorbird", "orcduo", "wraithtrio","wizard"]]
+enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
+               ["bee2","orc","crabduo", "wraith","craggle"], #enemy_types[1]
+               ["bees","terrorbird", "orcduo", "wraithtrio","wizard"]] #enemy_types[2]
 enemy_type = random.choice(enemy_types[0])
 enemy = Enemy(enemy_type)
 #enemy_types[0].remove(enemy_type)
 #print(enemy_types)
+
+enemy_counter = 0
 
 #health bars
 health_bar_width = 150
@@ -212,7 +216,6 @@ while run:
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
-                print('test')
                 game_map.handle_click(mouse_pos)
                 display_map = False  # Hide map after selection
                 break
@@ -220,7 +223,6 @@ while run:
                 run = False
 
     else:
-
         key = pygame.key.get_pressed()
         screen.fill((255, 255, 255))
         background = pygame.image.load('Images/fightbackground.png').convert()
@@ -552,14 +554,38 @@ while run:
             screen.blit(rendered_text, (x, y))
 
         if enemy.health <= 0:
-           # screen.fill((255, 255, 255))  #clear the screen
-           # victory_text = font.render("Enemy Defeated! Click the 'X' in the top right to exit!", True, (0, 0, 0))
-           # screen.blit(victory_text, ((SCREEN_WIDTH - victory_text.get_width()) // 2, SCREEN_HEIGHT // 2))
-            enemy.health = 10
+
+            player.mana = player.max_mana
+            excited_mode = False
+            discard_pile.extend(player_hand)
+            player_hand.clear()
+            draw_hand()
             display_map = True
-
-
-
+            print(enemy_counter)
+            if enemy_counter < 3:
+                print(enemy_type)
+                enemy_types[0].remove(enemy_type)
+                enemy_type = random.choice(enemy_types[0])
+                enemy = Enemy(enemy_type)
+                print(enemy_types)
+                enemy_counter+=1
+            elif enemy_counter < 6:
+                print(enemy_type)
+                enemy_types[1].remove(enemy_type)
+                enemy_type = random.choice(enemy_types[1])
+                enemy = Enemy(enemy_type)
+                enemy_counter+=1
+            elif enemy_counter < 9:
+                print(enemy_type)
+                enemy_types[2].remove(enemy_type)
+                enemy_type = random.choice(enemy_types[2])
+                enemy = Enemy(enemy_type)
+                enemy_counter+=1
+            '''
+            enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
+                        ["bee2","orc","crabduo", "wraith","craggle"], #enemy_types[1]
+                        ["bees","terrorbird", "orcduo", "wraithtrio","wizard"]] #enemy_types[2]
+            '''
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

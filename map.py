@@ -258,6 +258,10 @@ class Map:
         if self.display_map:  # Render the map only if display_map is True
             for node in self.nodes:
                 node.render(screen, mouse_pos)
+    
+    def reset_map(self):
+        for node in self.nodes:
+            node.visited = False
 
 # Example usage:
 pygame.init()
@@ -268,6 +272,7 @@ clock = pygame.time.Clock()
 map = Map()
 map.generate_map()
 
+'''
 running = True
 while running:
     for event in pygame.event.get():
@@ -291,3 +296,4 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+'''

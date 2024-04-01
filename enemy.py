@@ -17,6 +17,8 @@ class Enemy(pygame.sprite.Sprite):
         "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0},
         "bigbird": {"max_health": 90, "max_shield": 20,"damage": 12,"defend": 4,"dot":3, "dot_duration":2, "reduction": 0},
         "orcduo": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
+        "orc": {"max_health": 40, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
+        "craggle": {"max_health": 20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
         "goop": {"max_health": 20, "max_shield": 5,"damage": 10,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0.1}
     }
 
@@ -82,7 +84,7 @@ class Enemy(pygame.sprite.Sprite):
             # Caveman's action pattern: always attack
             return self.attack_player(player)
 
-        elif self.enemy_type == "wraith":
+        elif self.enemy_type == "wraith" or "craggle":
             # Wraith's action pattern:
             if self.current_dur > 0:
                     self.current_dur -=1
@@ -118,7 +120,7 @@ class Enemy(pygame.sprite.Sprite):
             else:
                 return self.defend_self()
         
-        elif self.enemy_type == "orcduo":
+        elif self.enemy_type == "orcduo" or "orc":
             # Caveman's action pattern: always attack
             if self.current_dur > 0:
                     self.current_dur -=1

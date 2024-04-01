@@ -198,6 +198,7 @@ game_map = Map()
 game_map.generate_map()
 nodeVar = False
 display_map = True
+level_count = 0
 
 run = True
 while run:
@@ -553,39 +554,36 @@ while run:
             rendered_text = font.render(sleep_text, True, (255, 255, 255))
             screen.blit(rendered_text, (x, y))
 
-        if enemy.health <= 0:
 
+        #handle level increase
+        if enemy.health <= 0:
+            # Your existing code to handle post-combat cleanup
             player.mana = player.max_mana
             excited_mode = False
             discard_pile.extend(player_hand)
             player_hand.clear()
             draw_hand()
             display_map = True
-            print(enemy_counter)
-            if enemy_counter < 3:
-                print(enemy_type)
-                enemy_types[0].remove(enemy_type)
-                enemy_type = random.choice(enemy_types[0])
-                enemy = Enemy(enemy_type)
+            enemy_counter += 1
+
+            enemy_counter +=1
+            if enemy_counter % 3 == 0:
+                level_count +=1
+                enemy_types[level_count-1].remove(enemy_type)
+                enemy_type = random.choice(enemy_types[level_count])
                 print(enemy_types)
-                enemy_counter+=1
-            elif enemy_counter < 6:
-                print(enemy_type)
-                enemy_types[1].remove(enemy_type)
-                enemy_type = random.choice(enemy_types[1])
                 enemy = Enemy(enemy_type)
-                enemy_counter+=1
-            elif enemy_counter < 9:
-                print(enemy_type)
-                enemy_types[2].remove(enemy_type)
-                enemy_type = random.choice(enemy_types[2])
+            else:
+                print(enemy_types)
+                enemy_types[level_count].remove(enemy_type)
+                enemy_type = random.choice(enemy_types[level_count])
+                print(enemy_types)
                 enemy = Enemy(enemy_type)
-                enemy_counter+=1
-            '''
-            enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
-                        ["bee2","orc","crabduo", "wraith","craggle"], #enemy_types[1]
-                        ["bees","terrorbird", "orcduo", "wraithtrio","wizard"]] #enemy_types[2]
-            '''
+
+
+            #print(f"Current Level: {level_count+1}")
+            #print(f"Selected Enemy Type: {enemy_type}")
+            #print(f"Enemy Types Available: {enemy_types[level_count]}")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

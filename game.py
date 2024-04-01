@@ -38,10 +38,10 @@ player = Player()
 
 
 #ENEMY
-enemy_types = ["wizard", "caveman", "wraith"]
-enemy_type = random.choice(enemy_types)
+enemy_types = [["spider", "caveman", "bat","goop", "crab"],["bee2","orc","crabduo", "wraith","craggle"],["bees","terrorbird", "orcduo", "wraithtrio","wizard"]]
+enemy_type = random.choice(enemy_types[0])
 enemy = Enemy(enemy_type)
-#enemy_types.remove(enemy_type)
+#enemy_types[0].remove(enemy_type)
 #print(enemy_types)
 
 #health bars
@@ -336,23 +336,32 @@ while run:
                 turn_active = True  
                 enemy_turn_text = None  
         else:
-            if random.choice([True, False]):  #simulate enemy's decision to attack or defend
-                enemy_attack_value = enemy.damage
-                effective_player_damage = max(0, enemy_attack_value - player.shield)
-                player.update_health(-effective_player_damage)
-                player.update_shield(-enemy_attack_value)  
-                #vengeful mode
+            enemy_turn_text,effective_player_damage = enemy.perform_action(player)
+            if effective_player_damage is not None:
+                damage_taken_last_turn += effective_player_damage
                 vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
                 if effective_player_damage > 0 and activate_vengeful == True:
                     enemy.update_health(-vengeful_damage)
-                #depressed mode
-                damage_taken_last_turn += effective_player_damage
-                enemy_turn_text = "Enemy attacked for 5!"
+            #     #depressed mode
+            #     damage_taken_last_turn += effective_player_damage
+
+            # if random.choice([True, False]):  #simulate enemy's decision to attack or defend
+            #     enemy_attack_value = enemy.damage
+            #     effective_player_damage = max(0, enemy_attack_value - player.shield)
+            #     player.update_health(-effective_player_damage)
+            #     player.update_shield(-enemy_attack_value)  
+            #     #vengeful mode
+            #     vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
+            #     if effective_player_damage > 0 and activate_vengeful == True:
+            #         enemy.update_health(-vengeful_damage)
+            #     #depressed mode
+            #     damage_taken_last_turn += effective_player_damage
+            #     enemy_turn_text = "Enemy attacked for 5!"
                 
-            else:
-                enemy_defend_value = 5
-                enemy.update_shield(enemy_defend_value)
-                enemy_turn_text = f'Enemy shielded for {enemy_defend_value}!'
+            # else:
+            #     enemy_defend_value = 5
+            #     enemy.update_shield(enemy_defend_value)
+            #     enemy_turn_text = f'Enemy shielded for {enemy_defend_value}!'
             
 
     if enemy_turn_text:

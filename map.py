@@ -275,8 +275,8 @@ class Map:
                         elif n.level > self.current_level:
                             n.visited = False  
 
-                    return True
-        return False
+                    return node.type
+        return None
 
     def render(self, screen, mouse_pos):
         if self.display_map:  # Render the map only if display_map is True

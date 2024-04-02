@@ -301,3 +301,25 @@ clock = pygame.time.Clock()
 # Create map object
 map = Map()
 map.generate_map()
+
+run = True
+while run:
+    screen.fill((255, 255, 255))
+    background = pygame.image.load('Images/map.jpeg').convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.blit(background, (0,0))
+    mouse_pos = pygame.mouse.get_pos()
+    map.render(screen, mouse_pos)  
+    pygame.display.update()
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
+            map.handle_click(mouse_pos)
+            display_map = False  
+            break
+        elif event.type == pygame.QUIT:
+            run = False
+
+
+    pygame.display.update()
+
+pygame.quit()

@@ -42,6 +42,10 @@ class Enemy(pygame.sprite.Sprite):
         self.turn_counter = 0
 
         self.damage_red = enemy_stats.get("reduction")
+    
+    def get_reduction_percentage(self):
+
+        return self.damage_red * 100
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)

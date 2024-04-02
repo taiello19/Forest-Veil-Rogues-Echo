@@ -46,7 +46,7 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
 
             if player_box_rect.collidepoint(pygame.mouse.get_pos()):
                 description_text = font.render(emotion_descriptions.get(i, "Description not available"), True, (255, 255, 255))
-                screen.blit(description_text, ((SCREEN_WIDTH - description_text.get_width()) // 2, SCREEN_HEIGHT - 100))
+                screen.blit(description_text, ((SCREEN_WIDTH - 1150) // 2, SCREEN_HEIGHT - 100))
 
 
         # Play button

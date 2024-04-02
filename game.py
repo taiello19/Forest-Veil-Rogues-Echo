@@ -21,7 +21,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 title_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_2.ttf', 72)
 font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 30)
-info_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 16)
+info_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 20)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.png') for i in range(1, 7)]
 emotion_descriptions = {
@@ -33,7 +33,45 @@ emotion_descriptions = {
     5: "Tired, You are super sleepy, play sleep cards to take a nap and restore some health!"
     # Ensure there's an entry for every emotion index
 }
+def render_multiline_text(screen, font, text, position):
+    lines = text.split("\n")
+    x, y = position
+    screen.fill((0, 0, 0))  # Optionally, clear the screen for each text update for simplicity
+    for line in lines:
+        rendered_line = font.render(line, True, (255, 255, 255))
+        screen.blit(rendered_line, (x, y))
+        y += font.get_height()
 
+def display_intro_text(screen, font, text, pace):
+    words = text.split()
+    displayed_text = ""
+    line = ""
+    max_width = screen.get_width() - 100  # Leave some margin
+    y_position = SCREEN_HEIGHT // 2 - 20  # Starting Y position
+
+    screen.fill((0, 0, 0))  # Clear the screen for initial text display
+    for word in words:
+        # Temporarily add the next word to line to check width
+        temp_line = line + word + " "
+        
+        # Measure the temporary line
+        line_width, _ = font.size(temp_line)
+        
+        if line_width < max_width:
+            line = temp_line
+        else:
+            # If the line exceeds max width, render the current line and start a new one
+            displayed_text += line + "\n"  # Move the current line to displayed text
+            line = word + " "  # Start a new line with the current word
+            # Render the updated text and then clear it for simplicity
+            render_multiline_text(screen, font, displayed_text + line, (50, y_position))
+        
+        # Render the updated text with the new word added
+        render_multiline_text(screen, font, displayed_text + line, (50, y_position))
+        pygame.display.flip()
+        time.sleep(pace)  # Pause after rendering the new word
+
+    time.sleep(1)
 #-------------------------------------------------------------------------------
 #PLAYERS
 player = Player()
@@ -103,10 +141,10 @@ def draw_hand(extra_card=False):
 def add_emotion_cards(deck, emotion_index):
     emotion_specific_cards = {
         0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife', 'info': 'Deal 8 Damage'}, 
-            {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun', 'info': 'Stun the enemy,\n forcing them to skip a turn'}],  #excited
+            {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun', 'info': 'Stun the enemy,\n forcing them to \nskip a turn'}],  #excited
 
-        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear', 'info': 'Deal 5 Damage'}, 
-            {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall', 'info': 'Block 6 Damage'}],  #nervous
+        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wood Spear', 'info': 'Deal 5 Damage'}, 
+            {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wood Wall', 'info': 'Block 6 Damage'}],  #nervous
 
         2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield', 'info': 'Block 10 Damage'}, 
             {'type': 'Dual', 'value': 7, 'shield': 3, 'mana': 1, 'name': 'Lash Out', 'info': 'Deal 7 Damage,\n Block 3 Damage'}],  #depressed - dual = deal damage and gain half that in shield
@@ -220,7 +258,7 @@ damage_taken_last_turn = 0
 
 #Vengeful
 activate_vengeful = False
-vengeful_multiplier = 0.25
+vengeful_multiplier = 0.50
 
 #Optimistic
 activate_optimistic = False
@@ -244,9 +282,37 @@ nodeVar = False
 display_map = True
 level_count = 0
 
+intro_variable = ''
+intro_colour = ''
+if selected_emoji_index is not None:
+    emotion_index = selected_emoji_index
+    if emotion_index == 0:
+        intro_variable = 'exitement'
+        intro_colour = 'green'
+    elif emotion_index == 1:
+        intro_variable = 'nervousness'
+        intro_colour = 'orange'
+    elif emotion_index == 2:
+        intro_variable = 'depression'
+        intro_colour = 'blue'
+    elif emotion_index == 3:
+        intro_variable = 'vengance'
+        intro_colour = 'red'
+    elif emotion_index == 4:
+        intro_variable = 'optimism'
+        intro_colour = 'yellow'
+    elif emotion_index == 5:
+        intro_variable = 'sleepiness'
+        intro_colour = 'purple'
+
+intro_text_skip = 'skip'
+intro_text = f"You wake up in an unfamiliar location, with no memories or idea of who you are . . . you look around but all you can see is trees for miles. You stand up dazed and confused but all of a sudden a chest appears out of nowhere. You walk up to the chest and it opens automatically displaying 6 different masks. You reach in and pull out the {intro_colour} mask. You feel a strong force pulling you to equip the mask. You put the mask on and a strong wave of {intro_variable} fills your soul. You look up and see three pathways form in front of you, choose wisely . . . "
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+display_intro_text(screen, font, intro_text_skip, 0.5)
+
 run = True
 while run:
-
+    #IMPLEMENT
     #Main Menu
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -255,15 +321,20 @@ while run:
 
 
     if display_map:
-        screen.fill((255, 255, 255))  # Clear screen or fill with background
+        screen.fill((255, 255, 255))
+        background = pygame.image.load('Images/map.jpeg').convert()
+        background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen.blit(background, (0,0))
         mouse_pos = pygame.mouse.get_pos()
-        game_map.render(screen, mouse_pos)  # Render the map
+        game_map.render(screen, mouse_pos)  
         pygame.display.update()
+        node_clicked = False 
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
-                game_map.handle_click(mouse_pos)
-                display_map = False  # Hide map after selection
-                break
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
+                node_clicked = game_map.handle_click(mouse_pos)
+                if node_clicked:
+                    display_map = False
+                    break
             elif event.type == pygame.QUIT:
                 run = False
 
@@ -279,10 +350,10 @@ while run:
         enemy.draw(screen)
 
         #display mana
-        mana_text = font.render(f"{player.mana}/{player.max_mana}", True, (0, 0, 0))
+        mana_text = font.render(f"{player.mana}/{player.max_mana}", True, (0, 0, 255))
         screen.blit(mana_text, (20, SCREEN_HEIGHT - 100))
         mana_rect = pygame.Rect(10, SCREEN_HEIGHT - 110, 50, 50)
-        pygame.draw.rect(screen, (0, 0, 0), mana_rect, 2)
+        pygame.draw.rect(screen, (0, 0, 255), mana_rect, 2)
 
         #display player's shield and health
         player_shield_text = font.render(f"Shield: {player.shield}", True, (0, 0, 0))
@@ -291,6 +362,10 @@ while run:
         #enemy shield
         enemy_shield_text = font.render(f"Enemy Shield: {enemy.shield}", True, (0, 0, 0))
         screen.blit(enemy_shield_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 70))
+
+        #enemy resist
+        enemy_resist_text = font.render(f"Enemy Resist: {enemy.get_reduction_percentage()}%", True, (0, 0, 0))
+        screen.blit(enemy_resist_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 100))
         
         player_health_bar = pygame.Rect(50, player.rect.bottom + 10, health_bar_width * (player.health / player.max_health), health_bar_height)
         enemy_health_bar = pygame.Rect(SCREEN_WIDTH - 80 - health_bar_width * (enemy.health / enemy.max_health), enemy.rect.bottom + 10, health_bar_width * (enemy.health / enemy.max_health), health_bar_height)
@@ -370,7 +445,7 @@ while run:
                 screen.blit(card_text, (card_rect.x + 10, card_rect.y + 10))
                 
                 #display mana value in the top right corner of each card
-                mana_text = font.render(str(card['mana']), True, (0, 0, 0))
+                mana_text = font.render(str(card['mana']), True, (0, 0, 255))
                 
                 circle = pygame.Rect(card_rect.x + card_rect.width - 30, card_rect.y + 5, 24, 24)
                 
@@ -478,7 +553,10 @@ while run:
                     #discard players hand and draw new cards
                     discard_pile.extend(player_hand)
                     player_hand.clear()
-                    draw_hand()
+                    if selected_emoji_index == 4:
+                        draw_hand(extra_card=True)
+                    else:
+                        draw_hand()
                     excited_mode = False
                     turn_active = False
                     player.shield = 0
@@ -497,7 +575,10 @@ while run:
                         excited_mode = False
                         discard_pile.extend(player_hand)
                         player_hand.clear()
-                        draw_hand()
+                        if selected_emoji_index == 4:
+                            draw_hand(extra_card=True)
+                        else:
+                            draw_hand()
                         turn_active = False
                         start_enemy_turn_time = time.time()
 
@@ -605,10 +686,14 @@ while run:
         #handle level increase
         if enemy.health <= 0:
             player.mana = player.max_mana
+            player.shield = 0
             excited_mode = False
             discard_pile.extend(player_hand)
             player_hand.clear()
-            draw_hand()
+            if selected_emoji_index == 4:
+                draw_hand(extra_card=True)
+            else:
+                draw_hand()
             display_map = True 
 
             enemy_counter +=1
@@ -626,13 +711,12 @@ while run:
                     if activate_depressed:
                         depressed_multiplier = 2
                     if activate_vengeful:
-                        vengeful_multiplier = 0.50
+                        vengeful_multiplier = 0.60
                     if activate_optimistic:
                         add_new_cards()
                     if activate_tired:
                         player.update_health(8)
                 elif level_count == 2:
-                    print('level 2')
                     player.max_mana += 1
                     level_2 = True
                 elif level_count == 3:
@@ -643,7 +727,7 @@ while run:
                     if activate_depressed:
                         depressed_multiplier = 1
                     if activate_vengeful:
-                        vengeful_multiplier = 0.60
+                        vengeful_multiplier = 0.80
                     if activate_optimistic:
                         add_new_cards_2()
                     if activate_tired:

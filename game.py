@@ -214,7 +214,7 @@ def endgame():
     show_cutscene(screen, 'Images/wizardtower.jpg', (255, 255, 255), "You break through a clearing in the forest to find a msytical looking tower. You walk inside to find a half open chest, inside you see a crystal, you pick it up and are restored of your emotions when all of a sudden you hear a voice in your head...")
     final_message = ". . . you weren't supposed to make it this far. I'm sorry it has come to this . . . goodbye . . . "
     display_intro_text(screen, font, final_message , 0.5)
-    draw_shaking_text(screen, 'Images/cave.jpg', shake_font, ". . .  F a l l i n g  . . .", (SCREEN_WIDTH - 900, SCREEN_HEIGHT//2), (255, 255, 255), shake_intensity=5, duration=4)
+    draw_shaking_text(screen, 'Images/cave.jpg', shake_font, ". . .  F a l l i n g  . . .", (SCREEN_WIDTH //2, SCREEN_HEIGHT//2), (255, 255, 255), shake_intensity=5, duration=4)
 
 def player_death():
     display_intro_text(screen, font, "You've taken a lot of damage . . . you start stumbling around and you feel light headed . . . The voice inside your head says . . . maybe next time young one . . . you start to black out . . ." , 0.5, 'Images/deathforest.jpg')
@@ -754,7 +754,7 @@ while run:
                                 player_damage = selected_card['value']
                                 player.update_health(-player_damage)
                                 if activate_vengeful == True:
-                                    vengeful_damage = math.ceil(player_damage * (vengeful_multiplier))
+                                    vengeful_damage = math.ceil(player_damage + 6)
                                     effective_damage = vengeful_damage - enemy.shield
                                     enemy.update_shield(-vengeful_damage)
                                     if effective_damage > 0:

@@ -326,11 +326,13 @@ while run:
         mouse_pos = pygame.mouse.get_pos()
         game_map.render(screen, mouse_pos)  
         pygame.display.update()
+        node_clicked = False 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
-                game_map.handle_click(mouse_pos)
-                display_map = False  
-                break
+                node_clicked = game_map.handle_click(mouse_pos)
+                if node_clicked:
+                    display_map = False
+                    break
             elif event.type == pygame.QUIT:
                 run = False
 

@@ -41,18 +41,6 @@ class MapNode:
             if pygame.Rect(self.position[0] - 20, self.position[1] - 20, 40, 40).collidepoint(mouse_pos):
                 pygame.draw.circle(screen, (173, 216, 230), self.position, 22, 2)  # Light blue ring
 
-    def handle_click(self, mouse_pos):
-        for node in self.nodes:
-            if node.is_clicked(mouse_pos) and not node.visited:
-                # Mark the clicked node as visited
-                node.visited = True
-                # Process other nodes based on the clicked node
-                for other_node in self.nodes:
-                    if other_node != node:
-                        if other_node.position[1] == node.position[1] or not any(n for n in node.connected_nodes if n == other_node):
-                            # Mark as visited if it's in the same row or not a directly connected node
-                            other_node.visited = True
-                break
 
 class Map:
     def __init__(self):
@@ -261,12 +249,13 @@ class Map:
     def handle_click(self, mouse_pos):
         clicked_node = None
         for node in self.nodes:
-            if node.is_clicked(mouse_pos):
+            if node.is_clicked(mouse_pos) and not node.visited:
                 clicked_node = node
+                node.visited = True
                 break
 
         if clicked_node:
-            print("Selected node:", clicked_node.position)  # Display the selected node's position in the terminal
+            #print("Selected node:", clicked_node.position)  # Display the selected node's position in the terminal
 
             # Check if the clicked node is in a group
             for group_leader, group in self.groups.items():
@@ -280,10 +269,8 @@ class Map:
                         if neighbor.position[0] > clicked_node.position[0]:
                             neighbor.visited = False
                     break
-
-            # Toggle the display_map variable to hide the map
-            self.display_map = True
-
+            return True
+        return False
     def render(self, screen, mouse_pos):
         if self.display_map:  # Render the map only if display_map is True
             for node in self.nodes:

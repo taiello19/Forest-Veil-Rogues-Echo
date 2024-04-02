@@ -603,7 +603,7 @@ while run:
                                 player_damage = selected_card['value']
                                 player.update_health(-player_damage)
                                 if activate_vengeful == True:
-                                    vengeful_damage = math.ceil(player_damage * (vengeful_multiplier + 1))
+                                    vengeful_damage = math.ceil(player_damage * (vengeful_multiplier))
                                     effective_damage = vengeful_damage - enemy.shield
                                     enemy.update_shield(-vengeful_damage)
                                     if effective_damage > 0:
@@ -705,7 +705,7 @@ while run:
                         depressed_multiplier = 2
                     if activate_vengeful:
                         #Return percent of dmg taken
-                        vengeful_multiplier = 0.60
+                        vengeful_multiplier = 1.50
                     if activate_optimistic:
                         add_new_cards()
                     if activate_tired:

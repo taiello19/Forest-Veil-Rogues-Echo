@@ -5,30 +5,30 @@ import math
 class Enemy(pygame.sprite.Sprite):
     ENEMY_STATS = {
         #Level 1 Enemies
-        "spider": {"max_health": 20, "max_shield": 5,"damage": 4,"defend": 5,"dot":2, "dot_duration":2, "reduction": 0},
-        "caveman": {"max_health": 30, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
-        "bat": {"max_health":20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "spider": {"max_health": 28, "max_shield": 5,"damage": 4,"defend": 7,"dot":2, "dot_duration":2, "reduction": 0},
+        "caveman": {"max_health": 35, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
+        "bat": {"max_health":28, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
         "goop": {"max_health": 35, "max_shield": 5,"damage": 15,"defend": 8,"dot":0, "dot_duration":2, "reduction": 0.1},
-        "crab": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 2,"dot":2, "dot_duration":2, "reduction": 0.2},
+        "crab": {"max_health": 30, "max_shield": 0,"damage": 6,"defend": 2,"dot":2, "dot_duration":2, "reduction": 0.2},
 
         #Level 2 Enemies
-        "bee": {"max_health": 40, "max_shield": 5,"damage": 6,"defend": 5,"dot":4, "dot_duration":3, "reduction": 0},
-        "abominable": {"max_health": 40, "max_shield": 0,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
-        "crabduo": {"max_health": 45, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":3, "reduction": 0.1},
-        "wraith": {"max_health": 40, "max_shield": 0,"damage": 20,"defend": 8,"dot":0, "dot_duration":2, "reduction": 0},
-        "craggle": {"max_health": 45, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.4, "dot_duration":1, "reduction": 0},
+        "bee": {"max_health": 50, "max_shield": 5,"damage": 6,"defend": 5,"dot":4, "dot_duration":3, "reduction": 0},
+        "abominable": {"max_health": 50, "max_shield": 0,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
+        "crabduo": {"max_health": 55, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":3, "reduction": 0.1},
+        "wraith": {"max_health": 50, "max_shield": 0,"damage": 20,"defend": 8,"dot":0, "dot_duration":2, "reduction": 0},
+        "craggle": {"max_health": 55, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.4, "dot_duration":1, "reduction": 0},
         
         #Level 3 Enemies
-        "bees": {"max_health": 60, "max_shield": 5,"damage": 7,"defend": 5,"dot":6, "dot_duration":3, "reduction": 0},
-        "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0.2},
+        "bees": {"max_health": 60, "max_shield": 5,"damage": 7,"defend": 7,"dot":6, "dot_duration":3, "reduction": 0},
+        "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
         "orcduo": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":4, "reduction": 0.2},
-        "wraithtrio": {"max_health": 70, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "wraithtrio": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 8,"dot":0.2, "dot_duration":1, "reduction": 0},
         "wizard": {"max_health": 80, "max_shield": 20,"damage": 30,"defend": 12,"dot":0, "dot_duration":3, "reduction": 0},
         
         #Bosses
         "warrior": {"max_health": 95, "max_shield": 0,"damage": 12,"defend": 4,"dot":0, "dot_duration":5, "reduction": 0.4},
-        "demon": {"max_health": 90, "max_shield": 30,"damage": 12,"defend": 6,"dot":4, "dot_duration":3, "reduction": 0.2},
-        "bigbird": {"max_health": 85, "max_shield": 20,"damage": 12,"defend": 4,"dot":0.6, "dot_duration":2, "reduction": 0},
+        "demon": {"max_health": 110, "max_shield": 30,"damage": 12,"defend": 6,"dot":4, "dot_duration":3, "reduction": 0.2},
+        "bigbird": {"max_health": 100, "max_shield": 20,"damage": 12,"defend": 4,"dot":0.6, "dot_duration":2, "reduction": 0},
         
         
         

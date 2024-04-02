@@ -81,7 +81,8 @@ player = Player()
 #ENEMY
 enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
                ["bee2","orc","crabduo", "wraith","craggle"], #enemy_types[1]
-               ["bees","terrorbird", "orcduo", "wraithtrio","wizard"]] #enemy_types[2]
+               ["bees","terrorbird", "orcduo", "wraithtrio","wizard"], #enemy_types[2]
+               ["demon","abominable", "bigbird"]] #enemy_types[3]
 enemy_type = random.choice(enemy_types[0])
 enemy = Enemy(enemy_type)
 #enemy_types[0].remove(enemy_type)
@@ -332,8 +333,12 @@ while run:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
                 node_clicked = game_map.handle_click(mouse_pos)
-                if node_clicked:
+
+                if node_clicked == 'battle' or node_clicked == 'battle2' or node_clicked == 'battle3' or node_clicked == 'boss':
                     display_map = False
+                    break
+                elif node_clicked == 'heal':
+                    player.update_health(10)
                     break
             elif event.type == pygame.QUIT:
                 run = False
@@ -490,31 +495,13 @@ while run:
             else:
                 enemy_turn_text,effective_player_damage = enemy.perform_action(player)
                 if effective_player_damage is not None:
+                    #depressed mode
                     damage_taken_last_turn += effective_player_damage
                     vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
                     if effective_player_damage > 0 and activate_vengeful == True:
                         enemy.update_health(-vengeful_damage)
                 #     #depressed mode
                 #     damage_taken_last_turn += effective_player_damage
-
-                # if random.choice([True, False]):  #simulate enemy's decision to attack or defend
-                #     enemy_attack_value = enemy.damage
-                #     effective_player_damage = max(0, enemy_attack_value - player.shield)
-                #     player.update_health(-effective_player_damage)
-                #     player.update_shield(-enemy_attack_value)  
-                #     #vengeful mode
-                #     vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
-                #     if effective_player_damage > 0 and activate_vengeful == True:
-                #         enemy.update_health(-vengeful_damage)
-                #     #depressed mode
-                #     damage_taken_last_turn += effective_player_damage
-                #     enemy_turn_text = "Enemy attacked for 5!"
-                    
-                # else:
-                #     enemy_defend_value = 5
-                #     enemy.update_shield(enemy_defend_value)
-                #     enemy_turn_text = f'Enemy shielded for {enemy_defend_value}!'
-                
 
         if enemy_turn_text:
             enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255)) 
@@ -573,6 +560,7 @@ while run:
                         player.mana = player.max_mana
                         enemy.shield = 0
                         excited_mode = False
+                        selected_card = None
                         discard_pile.extend(player_hand)
                         player_hand.clear()
                         if selected_emoji_index == 4:
@@ -688,6 +676,7 @@ while run:
             player.mana = player.max_mana
             player.shield = 0
             excited_mode = False
+            selected_card = None
             discard_pile.extend(player_hand)
             player_hand.clear()
             if selected_emoji_index == 4:
@@ -705,12 +694,17 @@ while run:
                 if level_count == 1:
                     player.update_health(5)
                     if activate_excited:
+                        #Extra dmg per attack
                         excited_damage = 2
                     if activate_nervous:
+                        #Each turn deal dmg
                         nervous_dmg = 5
+                        nervous_selfdmg = 2
                     if activate_depressed:
+                        #shield based on dmg taken
                         depressed_multiplier = 2
                     if activate_vengeful:
+                        #Return percent of dmg taken
                         vengeful_multiplier = 0.60
                     if activate_optimistic:
                         add_new_cards()
@@ -740,9 +734,9 @@ while run:
                 #print(enemy_types)
                 enemy = Enemy(enemy_type)
 
-            #print(f"Current Level: {level_count+1}")
-            #print(f"Selected Enemy Type: {enemy_type}")
-            #print(f"Enemy Types Available: {enemy_types[level_count]}")
+            print(f"Current Level: {level_count+1}")
+            print(f"Selected Enemy Type: {enemy_type}")
+            print(f"Enemy Types Available: {enemy_types[level_count]}")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

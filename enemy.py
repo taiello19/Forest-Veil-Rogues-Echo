@@ -7,7 +7,7 @@ class Enemy(pygame.sprite.Sprite):
         #Level 1 Enemies
         "spider": {"max_health": 20, "max_shield": 5,"damage": 4,"defend": 5,"dot":2, "dot_duration":2, "reduction": 0},
         "caveman": {"max_health": 30, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
-        "bat": {"max_health": 20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "bat": {"max_health":20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
         "goop": {"max_health": 35, "max_shield": 5,"damage": 15,"defend": 8,"dot":0, "dot_duration":2, "reduction": 0.1},
         "crab": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 2,"dot":2, "dot_duration":2, "reduction": 0.2},
 

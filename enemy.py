@@ -4,22 +4,35 @@ import math
 
 class Enemy(pygame.sprite.Sprite):
     ENEMY_STATS = {
-        "spider": {"max_health": 20, "max_shield": 5,"damage": 4,"defend": 5,"dot":2, "dot_duration":2, "reduction": 0},
-        "bee2": {"max_health": 30, "max_shield": 5,"damage": 6,"defend": 5,"dot":4, "dot_duration":3, "reduction": 0},
-        "bees": {"max_health": 50, "max_shield": 5,"damage": 7,"defend": 5,"dot":6, "dot_duration":3, "reduction": 0},
-        "wizard": {"max_health": 50, "max_shield": 20,"damage": 24,"defend": 8,"dot":0, "dot_duration":0, "reduction": 0},
-        "wraith": {"max_health": 20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
-        "caveman": {"max_health": 20, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
-        "crab": {"max_health": 20, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
-        "bat": {"max_health": 30, "max_shield": 0,"damage": 6,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0},
-        "warrior": {"max_health": 80, "max_shield": 30,"damage": 12,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
-        "demon": {"max_health": 100, "max_shield": 50,"damage": 12,"defend": 6,"dot":4, "dot_duration":2, "reduction": 0.2},
-        "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0},
-        "bigbird": {"max_health": 90, "max_shield": 20,"damage": 12,"defend": 4,"dot":3, "dot_duration":2, "reduction": 0},
-        "orcduo": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
-        "orc": {"max_health": 40, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
-        "craggle": {"max_health": 20, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
-        "goop": {"max_health": 20, "max_shield": 5,"damage": 10,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0.1}
+        #Level 1 Enemies
+        "spider": {"max_health": 15, "max_shield": 5,"damage": 4,"defend": 5,"dot":2, "dot_duration":2, "reduction": 0},
+        "caveman": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
+        "bat": {"max_health": 15, "max_shield": 0,"damage": 3,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0},
+        "goop": {"max_health": 35, "max_shield": 5,"damage": 12,"defend": 5,"dot":0, "dot_duration":0, "reduction": 0.1},
+        "crab": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 2,"dot":2, "dot_duration":0, "reduction": 0.2},
+
+        #Level 2 Enemies
+        "bee2": {"max_health": 25, "max_shield": 5,"damage": 6,"defend": 5,"dot":4, "dot_duration":3, "reduction": 0},
+        "abominable": {"max_health": 35, "max_shield": 0,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0},
+        "crabduo": {"max_health": 45, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
+        "wraith": {"max_health": 25, "max_shield": 0,"damage": 15,"defend": 5,"dot":0, "dot_duration":1, "reduction": 0},
+        "craggle": {"max_health": 35, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        
+        #Level 3 Enemies
+        "bees": {"max_health": 45, "max_shield": 5,"damage": 7,"defend": 5,"dot":6, "dot_duration":3, "reduction": 0},
+        "terrorbird": {"max_health": 55, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0},
+        "orcduo": {"max_health": 65, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
+        "wraithtrio": {"max_health": 65, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "wizard": {"max_health": 75, "max_shield": 20,"damage": 24,"defend": 8,"dot":0, "dot_duration":0, "reduction": 0},
+        
+        #Bosses
+        "warrior": {"max_health": 85, "max_shield": 30,"damage": 12,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
+        "demon": {"max_health": 80, "max_shield": 50,"damage": 12,"defend": 6,"dot":4, "dot_duration":2, "reduction": 0.2},
+        "bigbird": {"max_health": 75, "max_shield": 20,"damage": 12,"defend": 4,"dot":3, "dot_duration":2, "reduction": 0},
+        
+        
+        
+        
     }
 
     def __init__(self, enemy_type, x=900, y=100):
@@ -69,22 +82,22 @@ class Enemy(pygame.sprite.Sprite):
     def perform_action(self, player):
         chance = random.random()
         # Perform action based on enemy type
-        if self.enemy_type == "wizard":
+        if self.enemy_type == "wizard" or self.enemy_type == "goop" or self.enemy_type == "wraith":
             # Wizard's action pattern: randomly choose between attack and defend
             if chance < 0.6:
                 self.turn_counter +=1
                 if self.turn_counter % 3 == 0:  # Every 3rd turn
                     return self.beam(player)
                 else:
-                    return f"Enemy wizard is charging up a powerful beam!", None
+                    return f"Enemy is charging up a powerful beam!", None
             else:
                 return self.defend_self()
             
-        elif self.enemy_type == "caveman" or "crab":
+        elif self.enemy_type == "caveman" or self.enemy_type =="abominable" or self.enemy_type =="terrorbird":
             # Caveman's action pattern: always attack
             return self.attack_player(player)
 
-        elif self.enemy_type == "wraith" or "craggle":
+        elif self.enemy_type == "craggle" or self.enemy_type =="wraithtrio" or self.enemy_type =="bat" or self.enemy_type =="bigbird":
             # Wraith's action pattern:
             if self.current_dur > 0:
                     self.current_dur -=1
@@ -106,7 +119,7 @@ class Enemy(pygame.sprite.Sprite):
             else:
                 return self.defend_self()
                 
-        elif self.enemy_type == "bees":
+        elif self.enemy_type == "bee2" or self.enemy_type == "spider" or self.enemy_type == "bees":
             # Bee's action pattern:
             if self.current_dur > 0 and self.turn_counter % 3 == 0 :
                 return self.dot_damage(player, "poison")
@@ -114,13 +127,14 @@ class Enemy(pygame.sprite.Sprite):
                 self.turn_counter +=1
                 if self.turn_counter % 3 == 0:  # Every 3rd turn
                     self.current_dur = self.dot_dur
+                    self.attack_player(player)
                     return self.dot_damage(player, "poison")
                 else:
                     return self.attack_player(player)
             else:
                 return self.defend_self()
         
-        elif self.enemy_type == "orcduo" or "orc":
+        elif self.enemy_type == "crab" or self.enemy_type == "crabduo" or self.enemy_type == "orcduo" or self.enemy_type == "warrior":
             # Caveman's action pattern: always attack
             if self.current_dur > 0:
                     self.current_dur -=1

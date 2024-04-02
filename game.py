@@ -42,7 +42,8 @@ player = Player()
 #ENEMY
 enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
                ["bee2","orc","crabduo", "wraith","craggle"], #enemy_types[1]
-               ["bees","terrorbird", "orcduo", "wraithtrio","wizard"]] #enemy_types[2]
+               ["bees","terrorbird", "orcduo", "wraithtrio","wizard"], #enemy_types[2]
+               ["demon","abominable", "bigbird"]] #enemy_types[3]
 enemy_type = random.choice(enemy_types[0])
 enemy = Enemy(enemy_type)
 #enemy_types[0].remove(enemy_type)
@@ -368,31 +369,13 @@ while run:
             else:
                 enemy_turn_text,effective_player_damage = enemy.perform_action(player)
                 if effective_player_damage is not None:
+                    #depressed mode
                     damage_taken_last_turn += effective_player_damage
                     vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
                     if effective_player_damage > 0 and activate_vengeful == True:
                         enemy.update_health(-vengeful_damage)
                 #     #depressed mode
                 #     damage_taken_last_turn += effective_player_damage
-
-                # if random.choice([True, False]):  #simulate enemy's decision to attack or defend
-                #     enemy_attack_value = enemy.damage
-                #     effective_player_damage = max(0, enemy_attack_value - player.shield)
-                #     player.update_health(-effective_player_damage)
-                #     player.update_shield(-enemy_attack_value)  
-                #     #vengeful mode
-                #     vengeful_damage = math.ceil(effective_player_damage * vengeful_multiplier)
-                #     if effective_player_damage > 0 and activate_vengeful == True:
-                #         enemy.update_health(-vengeful_damage)
-                #     #depressed mode
-                #     damage_taken_last_turn += effective_player_damage
-                #     enemy_turn_text = "Enemy attacked for 5!"
-                    
-                # else:
-                #     enemy_defend_value = 5
-                #     enemy.update_shield(enemy_defend_value)
-                #     enemy_turn_text = f'Enemy shielded for {enemy_defend_value}!'
-                
 
         if enemy_turn_text:
             enemy_turn_text_rendered = font.render(enemy_turn_text, True, (255, 255, 255)) 
@@ -571,18 +554,15 @@ while run:
                 level_count +=1
                 enemy_types[level_count-1].remove(enemy_type)
                 enemy_type = random.choice(enemy_types[level_count])
-                print(enemy_types)
                 enemy = Enemy(enemy_type)
             else:
-                print(enemy_types)
                 enemy_types[level_count].remove(enemy_type)
                 enemy_type = random.choice(enemy_types[level_count])
-                print(enemy_types)
                 enemy = Enemy(enemy_type)
 
-            #print(f"Current Level: {level_count+1}")
-            #print(f"Selected Enemy Type: {enemy_type}")
-            #print(f"Enemy Types Available: {enemy_types[level_count]}")
+            print(f"Current Level: {level_count+1}")
+            print(f"Selected Enemy Type: {enemy_type}")
+            print(f"Enemy Types Available: {enemy_types[level_count]}")
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

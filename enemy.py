@@ -5,30 +5,30 @@ import math
 class Enemy(pygame.sprite.Sprite):
     ENEMY_STATS = {
         #Level 1 Enemies
-        "spider": {"max_health": 15, "max_shield": 5,"damage": 4,"defend": 5,"dot":2, "dot_duration":2, "reduction": 0},
-        "caveman": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
-        "bat": {"max_health": 15, "max_shield": 0,"damage": 3,"defend": 5,"dot":0.4, "dot_duration":1, "reduction": 0},
-        "goop": {"max_health": 35, "max_shield": 5,"damage": 12,"defend": 5,"dot":0, "dot_duration":2, "reduction": 0.1},
-        "crab": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 2,"dot":2, "dot_duration":0, "reduction": 0.2},
+        "spider": {"max_health": 18, "max_shield": 5,"damage": 4,"defend": 5,"dot":2, "dot_duration":2, "reduction": 0},
+        "caveman": {"max_health": 30, "max_shield": 0,"damage": 8,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
+        "bat": {"max_health": 15, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "goop": {"max_health": 35, "max_shield": 5,"damage": 15,"defend": 8,"dot":0, "dot_duration":2, "reduction": 0.1},
+        "crab": {"max_health": 25, "max_shield": 0,"damage": 6,"defend": 2,"dot":2, "dot_duration":2, "reduction": 0.2},
 
         #Level 2 Enemies
-        "bee2": {"max_health": 25, "max_shield": 5,"damage": 6,"defend": 5,"dot":4, "dot_duration":3, "reduction": 0},
-        "abominable": {"max_health": 35, "max_shield": 0,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0},
-        "crabduo": {"max_health": 45, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
-        "wraith": {"max_health": 25, "max_shield": 0,"damage": 15,"defend": 5,"dot":0, "dot_duration":1, "reduction": 0},
-        "craggle": {"max_health": 35, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "bee2": {"max_health": 40, "max_shield": 5,"damage": 6,"defend": 5,"dot":4, "dot_duration":3, "reduction": 0},
+        "abominable": {"max_health": 40, "max_shield": 0,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
+        "crabduo": {"max_health": 45, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":3, "reduction": 0.1},
+        "wraith": {"max_health": 40, "max_shield": 0,"damage": 20,"defend": 8,"dot":0, "dot_duration":2, "reduction": 0},
+        "craggle": {"max_health": 45, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.4, "dot_duration":1, "reduction": 0},
         
         #Level 3 Enemies
-        "bees": {"max_health": 45, "max_shield": 5,"damage": 7,"defend": 5,"dot":6, "dot_duration":3, "reduction": 0},
-        "terrorbird": {"max_health": 55, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0},
-        "orcduo": {"max_health": 65, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":2, "reduction": 0},
-        "wraithtrio": {"max_health": 65, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
-        "wizard": {"max_health": 75, "max_shield": 20,"damage": 24,"defend": 8,"dot":0, "dot_duration":3, "reduction": 0},
+        "bees": {"max_health": 60, "max_shield": 5,"damage": 7,"defend": 5,"dot":6, "dot_duration":3, "reduction": 0},
+        "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 2,"dot":0, "dot_duration":0, "reduction": 0.2},
+        "orcduo": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":4, "reduction": 0.2},
+        "wraithtrio": {"max_health": 70, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.2, "dot_duration":1, "reduction": 0},
+        "wizard": {"max_health": 80, "max_shield": 20,"damage": 30,"defend": 12,"dot":0, "dot_duration":3, "reduction": 0},
         
         #Bosses
-        "warrior": {"max_health": 85, "max_shield": 0,"damage": 12,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.4},
-        "demon": {"max_health": 80, "max_shield": 30,"damage": 12,"defend": 6,"dot":4, "dot_duration":2, "reduction": 0.2},
-        "bigbird": {"max_health": 75, "max_shield": 20,"damage": 12,"defend": 4,"dot":3, "dot_duration":2, "reduction": 0},
+        "warrior": {"max_health": 95, "max_shield": 0,"damage": 12,"defend": 4,"dot":0, "dot_duration":5, "reduction": 0.4},
+        "demon": {"max_health": 90, "max_shield": 30,"damage": 12,"defend": 6,"dot":4, "dot_duration":3, "reduction": 0.2},
+        "bigbird": {"max_health": 85, "max_shield": 20,"damage": 12,"defend": 4,"dot":0.6, "dot_duration":2, "reduction": 0},
         
         
         
@@ -75,10 +75,10 @@ class Enemy(pygame.sprite.Sprite):
             self.health = 0
 
     def update_shield(self, amount):
-        if amount > 0:
-            amount
-        else:
-            amount = math.ceil(amount * (1 - self.damage_red))
+        # if amount > 0:
+        #     amount
+        # else:
+        #     amount = math.ceil(amount * (1 - self.damage_red))
         self.shield += amount
         if self.shield < 0:
             self.shield = 0
@@ -88,9 +88,9 @@ class Enemy(pygame.sprite.Sprite):
         # Perform action based on enemy type
         if self.enemy_type == "wizard" or self.enemy_type == "goop" or self.enemy_type == "wraith":
             # Wizard's action pattern: randomly choose between attack and defend
-            if chance < 0.6:
+            if chance < 0.7:
                 self.turn_counter +=1
-                if self.turn_counter % 2 == 0:  # Every 3rd turn
+                if self.turn_counter % self.dot_dur == 0:  # Every 3rd turn
                     return self.beam(player)
                 else:
                     return f"{self.enemy_type} is charging up a powerful beam!", None
@@ -111,13 +111,13 @@ class Enemy(pygame.sprite.Sprite):
             elif self.current_dur == 0:
                     self.damage_red = 0
 
-            if chance < 0.6:
+            if chance < 0.7:
                 self.turn_counter +=1
                 if self.turn_counter % 3 == 0:  # Every 3rd attack
                     self.current_dur = self.dot_dur
                     self.damage_red = self.dot
                     self.attack_player(player)
-                    return f'{self.enemy_type} weakened you and you now deal 20% less damage for {self.dot_dur} turns!', max(0, self.damage - player.shield)
+                    return f'{self.enemy_type} weakened you and you now deal {self.damage_red * 100}% less damage for {self.dot_dur} turns!', max(0, self.damage - player.shield)
                 else:
                     return self.attack_player(player)
             else:
@@ -126,8 +126,9 @@ class Enemy(pygame.sprite.Sprite):
         elif self.enemy_type == "bee2" or self.enemy_type == "spider" or self.enemy_type == "bees":
             # Bee's action pattern:
             if self.current_dur > 0 and self.turn_counter % 3 == 0 :
-                return self.dot_damage(player, "poison")
-            elif chance < 0.7:
+                self.dot_damage(player, "poison")
+                return self.attack_player(player)
+            elif chance < 0.8:
                 self.turn_counter +=1
                 if self.turn_counter % 3 == 0:  # Every 3rd turn
                     self.current_dur = self.dot_dur
@@ -193,7 +194,7 @@ class Enemy(pygame.sprite.Sprite):
         self.current_dur -=1
         if self.current_dur == 0 and self.turn_counter % 3 ==0:
             self.turn_counter =0
-        return f'{self.enemy_type} inflicted {type} on you and it will deal {enemy_dot_value} for the next {self.current_dur} turns!', effective_player_damage
+        return f'{self.enemy_type} inflicted {type} on you and it will deal {enemy_dot_value} for the next {self.current_dur} turns!', effective_player_damage + self.damage
     
     def defend_self(self):
         enemy_defend_value = self.defend

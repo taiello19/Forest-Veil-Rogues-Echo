@@ -733,7 +733,7 @@ while run:
 
                     elif use_button_rect.collidepoint(event.pos):
                         #check if a card is selected
-                        if selected_card is not None and player.mana != 0:
+                        if selected_card is not None and player.mana >= selected_card['mana']:
                             #card type will determine the action taken on use button click
                             if selected_card['type'] == 'Attack':
                                 #deal damage to the enemy

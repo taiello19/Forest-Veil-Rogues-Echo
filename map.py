@@ -6,11 +6,12 @@ GREEN = (0, 255, 0)
 
 
 class MapNode:
-    def __init__(self, position, type):
+    def __init__(self, position, type, level):
         self.position = position
         self.connected_nodes = []
         self.visited = False
         self.type = type
+        self.level = level
 
     def add_connection(self, node):
         self.connected_nodes.append(node)
@@ -31,9 +32,15 @@ class MapNode:
                              (self.position[0] + 20, self.position[1] - 20), 2)
         else:
             if self.type == 'heal':
-                color = GREEN
-            else:
-                color = (255,255,255)
+                color = (75, 150, 32)
+            elif self.type == 'battle':
+                color = (211, 211, 211)
+            elif self.type == 'boss':
+                color = (134, 1, 17)
+            elif self.type == 'battle2':
+                color = (150, 150, 150)
+            elif self.type == 'battle3':
+                color = (50, 50, 50)
             
             pygame.draw.circle(screen, color, self.position, 20)
             pygame.draw.circle(screen, (0, 0, 0), self.position, 20, 2)
@@ -47,6 +54,8 @@ class Map:
         self.nodes = []
         self.groups = {}  # Dictionary to store nodes grouped by connected components
         self.display_map = True
+        self.active_node = None
+        self.current_level = 0
 
     def add_node(self, node):
         self.nodes.append(node)
@@ -57,57 +66,57 @@ class Map:
 
     def generate_map(self):
         # Create starting nodes on the left side
-        start_node1 = MapNode((150, 200), 'battle')
-        start_node2 = MapNode((150, 400), 'battle')
-        start_node3 = MapNode((150, 600), 'battle')
+        start_node1 = MapNode((150, 200), 'battle', 0)
+        start_node2 = MapNode((150, 400), 'battle', 0)
+        start_node3 = MapNode((150, 600), 'battle', 0)
 
-        battle_node1 = MapNode((250, 200), 'battle')
-        battle_node2 = MapNode((250, 300), 'battle')
-        battle_node3 = MapNode((250, 500), 'battle')
-        battle_node4 = MapNode((250, 600), 'battle')
+        battle_node1 = MapNode((250, 200), 'battle', 1)
+        battle_node2 = MapNode((250, 300), 'battle', 1)
+        battle_node3 = MapNode((250, 500), 'battle', 1)
+        battle_node4 = MapNode((250, 600), 'battle', 1)
 
-        battle_node5 = MapNode((350, 225), 'battle')
-        battle_node6 = MapNode((350, 350), 'battle')
-        battle_node7 = MapNode((350, 515), 'battle')
+        battle_node5 = MapNode((350, 225), 'battle', 2)
+        battle_node6 = MapNode((350, 350), 'battle', 2)
+        battle_node7 = MapNode((350, 515), 'battle', 2)
 
-        battle_node8 = MapNode((450, 100), 'battle')
-        battle_node9 = MapNode((450, 200), 'battle')
-        battle_node10 = MapNode((450, 400), 'battle')
-        battle_node11 = MapNode((450, 500), 'battle')
-        battle_node12 = MapNode((450, 700), 'battle')
+        battle_node8 = MapNode((450, 100), 'battle2', 3)
+        battle_node9 = MapNode((450, 200), 'battle2', 3)
+        battle_node10 = MapNode((450, 400), 'battle2', 3)
+        battle_node11 = MapNode((450, 500), 'battle2', 3)
+        battle_node12 = MapNode((450, 700), 'battle2', 3)
 
-        battle_node13 = MapNode((550, 150), 'battle')
-        battle_node14 = MapNode((550, 300), 'battle')
-        battle_node15 = MapNode((550, 450), 'battle')
-        battle_node16 = MapNode((550, 700), 'battle')
+        battle_node13 = MapNode((550, 150), 'battle2', 4)
+        battle_node14 = MapNode((550, 300), 'battle2', 4)
+        battle_node15 = MapNode((550, 450), 'battle2', 4)
+        battle_node16 = MapNode((550, 700), 'battle2', 4)
 
-        battle_node17 = MapNode((650, 150), 'battle')
-        battle_node18 = MapNode((650, 250), 'battle')
-        battle_node19 = MapNode((650, 350), 'battle')
-        battle_node20 = MapNode((650, 450), 'battle')
-        battle_node21 = MapNode((650, 550), 'battle')
-        battle_node22 = MapNode((650, 700), 'battle')
+        battle_node17 = MapNode((650, 150), 'battle2', 5)
+        battle_node18 = MapNode((650, 250), 'battle2', 5)
+        battle_node19 = MapNode((650, 350), 'battle2', 5)
+        battle_node20 = MapNode((650, 450), 'battle2', 5)
+        battle_node21 = MapNode((650, 550), 'battle2', 5)
+        battle_node22 = MapNode((650, 700), 'battle2', 5)
 
-        battle_node23 = MapNode((750, 100), 'heal')
-        battle_node24 = MapNode((750, 250), 'heal')
-        battle_node25 = MapNode((750, 400), 'heal')
-        battle_node26 = MapNode((750, 550), 'heal')
-        battle_node27 = MapNode((750, 700), 'heal')
+        battle_node23 = MapNode((750, 100), 'heal', 6)
+        battle_node24 = MapNode((750, 250), 'heal', 6)
+        battle_node25 = MapNode((750, 400), 'heal', 6)
+        battle_node26 = MapNode((750, 550), 'heal', 6)
+        battle_node27 = MapNode((750, 700), 'heal', 6)
 
-        battle_node28 = MapNode((850, 175), 'battle')
-        battle_node29 = MapNode((850, 350), 'battle')
-        battle_node30 = MapNode((850, 500), 'battle')
-        battle_node31 = MapNode((850, 675), 'battle')
+        battle_node28 = MapNode((850, 175), 'battle3', 7)
+        battle_node29 = MapNode((850, 350), 'battle3', 7)
+        battle_node30 = MapNode((850, 500), 'battle3', 7)
+        battle_node31 = MapNode((850, 675), 'battle3', 7)
 
-        battle_node32 = MapNode((950, 250), 'battle')
-        battle_node33 = MapNode((950, 400), 'battle')
-        battle_node34 = MapNode((950, 600), 'battle')
+        battle_node32 = MapNode((950, 250), 'battle3', 8)
+        battle_node33 = MapNode((950, 400), 'battle3', 8)
+        battle_node34 = MapNode((950, 600), 'battle3', 8)
 
-        battle_node35 = MapNode((1050, 300), 'battle')
-        battle_node36 = MapNode((1050, 400), 'battle')
-        battle_node37 = MapNode((1050, 500), 'battle')
+        battle_node35 = MapNode((1050, 300), 'battle3', 9)
+        battle_node36 = MapNode((1050, 400), 'battle3', 9)
+        battle_node37 = MapNode((1050, 500), 'battle3', 9)
 
-        battle_node38 = MapNode((1135, 400), 'heal')
+        battle_node38 = MapNode((1135, 400), 'heal', 10)
 
         self.add_node(start_node1)
         self.add_node(start_node2)
@@ -153,7 +162,7 @@ class Map:
 
         # Create end node on the right side
         end_node_position = (SCREEN_WIDTH - 75, SCREEN_HEIGHT // 2)
-        end_node = MapNode(end_node_position, 'battle')
+        end_node = MapNode(end_node_position, 'boss', 11)
         self.add_node(end_node)
 
         # Connect each starting node to the end node
@@ -247,30 +256,28 @@ class Map:
                 self.dfs(neighbor, visited, group)
 
     def handle_click(self, mouse_pos):
-        clicked_node = None
         for node in self.nodes:
-            if node.is_clicked(mouse_pos) and not node.visited:
-                clicked_node = node
-                node.visited = True
-                break
+            if node.is_clicked(mouse_pos):
+                if (self.active_node is None and node.level == 0) or \
+                (self.active_node and node in self.active_node.connected_nodes and node.level == self.current_level + 1):
+                    
+                    self.current_level = node.level
 
-        if clicked_node:
-            #print("Selected node:", clicked_node.position)  # Display the selected node's position in the terminal
+                    if self.active_node:
+                        self.active_node.visited = True
 
-            # Check if the clicked node is in a group
-            for group_leader, group in self.groups.items():
-                if clicked_node in group:
-                    # Disable selection for all nodes in the same group
-                    for node_in_group in group:
-                        node_in_group.visited = True
+                    self.active_node = node
+                    node.visited = True
 
-                    # Enable selection for nodes connected to the clicked node and on the right
-                    for neighbor in clicked_node.connected_nodes:
-                        if neighbor.position[0] > clicked_node.position[0]:
-                            neighbor.visited = False
-                    break
-            return True
+                    for n in self.nodes:
+                        if n.level == self.current_level + 1:
+                            n.visited = False  
+                        elif n.level > self.current_level:
+                            n.visited = False  
+
+                    return True
         return False
+
     def render(self, screen, mouse_pos):
         if self.display_map:  # Render the map only if display_map is True
             for node in self.nodes:
@@ -288,7 +295,7 @@ clock = pygame.time.Clock()
 # Create map object
 map = Map()
 map.generate_map()
-
+'''
 run = True
 while run:
     screen.fill((255, 255, 255))
@@ -310,3 +317,4 @@ while run:
     pygame.display.update()
 
 pygame.quit()
+'''

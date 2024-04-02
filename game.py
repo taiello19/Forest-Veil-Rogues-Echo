@@ -258,7 +258,7 @@ damage_taken_last_turn = 0
 
 #Vengeful
 activate_vengeful = False
-vengeful_multiplier = 0.25
+vengeful_multiplier = 0.50
 
 #Optimistic
 activate_optimistic = False
@@ -297,15 +297,17 @@ if selected_emoji_index is not None:
         intro_colour = 'blue'
     elif emotion_index == 3:
         intro_variable = 'vengance'
-        intro_colour = 'green'
+        intro_colour = 'red'
     elif emotion_index == 4:
         intro_variable = 'optimism'
         intro_colour = 'yellow'
     elif emotion_index == 5:
         intro_variable = 'sleepiness'
         intro_colour = 'purple'
+
 intro_text_skip = 'skip'
 intro_text = f"You wake up in an unfamiliar location, with no memories or idea of who you are . . . you look around but all you can see is trees for miles. You stand up dazed and confused but all of a sudden a chest appears out of nowhere. You walk up to the chest and it opens automatically displaying 6 different masks. You reach in and pull out the {intro_colour} mask. You feel a strong force pulling you to equip the mask. You put the mask on and a strong wave of {intro_variable} fills your soul. You look up and see three pathways form in front of you, choose wisely . . . "
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
 display_intro_text(screen, font, intro_text_skip, 0.5)
 
 run = True
@@ -684,6 +686,7 @@ while run:
         #handle level increase
         if enemy.health <= 0:
             player.mana = player.max_mana
+            player.shield = 0
             excited_mode = False
             discard_pile.extend(player_hand)
             player_hand.clear()
@@ -708,13 +711,12 @@ while run:
                     if activate_depressed:
                         depressed_multiplier = 2
                     if activate_vengeful:
-                        vengeful_multiplier = 0.50
+                        vengeful_multiplier = 0.60
                     if activate_optimistic:
                         add_new_cards()
                     if activate_tired:
                         player.update_health(8)
                 elif level_count == 2:
-                    print('level 2')
                     player.max_mana += 1
                     level_2 = True
                 elif level_count == 3:
@@ -725,7 +727,7 @@ while run:
                     if activate_depressed:
                         depressed_multiplier = 1
                     if activate_vengeful:
-                        vengeful_multiplier = 0.60
+                        vengeful_multiplier = 0.80
                     if activate_optimistic:
                         add_new_cards_2()
                     if activate_tired:

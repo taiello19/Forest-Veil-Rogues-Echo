@@ -21,15 +21,16 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 title_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_2.ttf', 72)
 font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 30)
+info_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 16)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.png') for i in range(1, 7)]
 emotion_descriptions = {
-    0: "Excited, description here",
-    1: "Nervous, description here",
-    2: "Depressed, description here",
-    3: "Vengeful, description here",
-    4: "Optimistic, description here",
-    5: "Tired, description here"
+    0: "Excited, Get excited and deal extra damage when playing subsequent attack cards!",
+    1: "Nervous, At the end of you panic and deal damage to yourself or the enemy!",
+    2: "Depressed, Curl up into your shell when you take damage and gain a shield based on damage taken!",
+    3: "Vengeful, When you take damage get angry and lash out damaging the enemy!",
+    4: "Optimistic, Because of your positive attitude the game admins have blessed you with bonus rewards!",
+    5: "Tired, You are super sleepy, play sleep cards to take a nap and restore some health!"
     # Ensure there's an entry for every emotion index
 }
 
@@ -55,24 +56,25 @@ enemy_counter = 0
 health_bar_width = 150
 health_bar_height = 15
 
+level_2 = False
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 #CARDS
-cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack'},
-         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
-         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
-         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
-         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
-         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'},
-         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend'}]
+cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
+         {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'}]
 
 
 draw_pile = list(cards)  #initial draw pile 
@@ -84,6 +86,8 @@ player_hand = []
 def draw_hand(extra_card=False):
     card_width, card_height = 150, 180  
     draw_number = 5 if extra_card else 4
+    if level_2:
+        draw_number += 1
     for _ in range(draw_number):
         if not draw_pile:
             #shuffle discard pile back into draw pile when empty
@@ -99,24 +103,24 @@ def draw_hand(extra_card=False):
 
 def add_emotion_cards(deck, emotion_index):
     emotion_specific_cards = {
-        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife'}, 
-            {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun'}],  #excited
+        0: [{'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Knife', 'info': 'Deal 8 Damage'}, 
+            {'type': 'Stun', 'value': 1, 'mana': 1, 'name': 'Stun', 'info': 'Stun the enemy,\n forcing them to skip a turn'}],  #excited
 
-        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear'}, 
-            {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall'}],  #nervous
+        1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wooden Spear', 'info': 'Deal 5 Damage'}, 
+            {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wooden Wall', 'info': 'Block 6 Damage'}],  #nervous
 
-        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield'}, 
-            {'type': 'Dual', 'value': 7, 'shield': 3, 'mana': 1, 'name': 'Lash Out'}],  #depressed - dual = deal damage and gain half that in shield
+        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield', 'info': 'Block 10 Damage'}, 
+            {'type': 'Dual', 'value': 7, 'shield': 3, 'mana': 1, 'name': 'Lash Out', 'info': 'Deal 7 Damage,\n Block 3 Damage'}],  #depressed - dual = deal damage and gain half that in shield
 
-        3: [{'type': 'Self', 'value': 2, 'shield': 6, 'mana': 2, 'name': 'Double-Edge'}, 
-            {'type': 'Dual', 'value': 6, 'shield': 3, 'mana': 1, 'name': 'Rampage'}],  #vengeful - Self = take 2 damage
+        3: [{'type': 'Self', 'value': 2, 'shield': 6, 'mana': 2, 'name': 'Double-Edge', 'info': 'Deal 2 Damage\n to yourself'}, 
+            {'type': 'Dual', 'value': 6, 'shield': 3, 'mana': 1, 'name': 'Rampage',  'info': 'Deal 7 Damage,\n Block 3 Damage'}],  #vengeful - Self = take 2 damage
 
-        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash'}, 
-            {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down'}, 
-            {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash'}],  #optimistic
+        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash', 'info': 'Deal 7 Damage'}, 
+            {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down', 'info': 'Block 7 Damage'}, 
+            {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash', 'info': 'Deal 9 Damage'}],  #optimistic
             
-        5: [{'type': 'SleepDMG', 'value': 3, 'mana': 0, 'sleepyTime': 5, 'name': 'Sleep Attack'}, 
-            {'type': 'SleepBlock', 'value': 0, 'mana': 2, 'sleepyTime': 10, 'name': 'Long Slumber'}],  #tired
+        5: [{'type': 'SleepDMG', 'value': 3, 'mana': 0, 'sleepyTime': 5, 'name': 'Sleep Attack', 'info': 'Deal 3 Damage,\n Heal 5 Health'}, 
+            {'type': 'SleepBlock', 'value': 0, 'mana': 2, 'sleepyTime': 10, 'name': 'Long Slumber', 'info': 'Heal 10 Health'}],  #tired
         
     }
 
@@ -125,6 +129,43 @@ def add_emotion_cards(deck, emotion_index):
         deck.extend(emotion_specific_cards[emotion_index])
 
     return deck
+
+
+def add_new_cards():
+        if emotion_index == 4:  # If the selected emotion is Optimistic
+            new_cards = [
+                {'type': 'Dual', 'value': 8, 'shield': 4, 'mana': 1, 'name': 'Bludgeon',  'info': 'Deal 8 Damage,\n Block 4 Damage'}, 
+                {'type': 'Dual', 'value': 4, 'shield': 9, 'mana': 1, 'name': 'Deny',  'info': 'Deal 4 Damage,\n Block 9 Damage'}
+            ]
+            draw_pile.extend(new_cards)  # Add new cards directly to the draw pile
+            random.shuffle(draw_pile)
+
+def add_new_cards_2():
+        if emotion_index == 4:  # If the selected emotion is Optimistic
+            new_cards = [
+                {'type': 'Dual', 'value': 8, 'shield': 4, 'mana': 1, 'name': 'Bludgeon',  'info': 'Deal 7 Damage,\n Block 3 Damage'}, 
+                {'type': 'Dual', 'value': 4, 'shield': 9, 'mana': 1, 'name': 'Deny',  'info': 'Deal 7 Damage,\n Block 3 Damage'}
+            ]
+            draw_pile.extend(new_cards)  # Add new cards directly to the draw pile
+            random.shuffle(draw_pile)
+        elif emotion_index == 5:
+            new_cards = [
+                {'type': 'SleepDMG', 'value': 8, 'mana': 0, 'sleepyTime': 5, 'name': 'Sleepy Slam', 'info': 'Deal 8 Damage,\n Heal 5 Health'}
+            ]
+            draw_pile.extend(new_cards)  # Add new cards directly to the draw pile
+            random.shuffle(draw_pile)
+
+def draw_card_info(surface, text, pos, font, color=(0,0,0), max_width=None):
+    lines = text.split('\n')
+    y_offset = 0
+    for line in lines:
+        line_surface = font.render(line, True, color)
+        if max_width and line_surface.get_width() > max_width:
+            # Optional: If a single line is too wide, you can split it further here
+            # This is a more advanced feature and requires a similar approach to the draw_text_wrapped function
+            pass
+        surface.blit(line_surface, (pos[0], pos[1] + y_offset))
+        y_offset += font.get_height()
 #-------------------------------------------------------------------------------
             
 
@@ -164,6 +205,8 @@ activate_excited = False
 excited_mode = False
 #this allows for the stun card to work
 stun = False
+#excited mode damage boost
+excited_damage = 1
 
 #Nervous
 activate_nervous = False
@@ -173,6 +216,7 @@ nervous_dmg = 3
 
 #Depressed
 activate_depressed = False
+depressed_multiplier = 3
 damage_taken_last_turn = 0
 
 #Vengeful
@@ -280,6 +324,7 @@ while run:
                 activate_vengeful = True
             elif emotion_index == 4:
                 additional_text = "Optimistic"
+                activate_optimistic = True
             elif emotion_index == 5:
                 additional_text = "Tired"
                 activate_tired == True
@@ -314,6 +359,7 @@ while run:
         for i, card in enumerate(player_hand):
             card_rect = pygame.Rect(start_x + i * (card_width + card_spacing), SCREEN_HEIGHT - card_height - 20, card_width, card_height)
             card['rect'] = card_rect
+            
 
             if card == selected_card:
                 pygame.draw.rect(screen, (255, 255, 0), card_rect, 3)
@@ -321,7 +367,7 @@ while run:
             
             if turn_active:
                 pygame.draw.rect(screen, (200, 200, 200), card_rect)
-                card_text = font.render(f"{card['name']} {card['value']}", True, (0, 0, 0))
+                card_text = font.render(f"{card['name']}", True, (0, 0, 0))
                 screen.blit(card_text, (card_rect.x + 10, card_rect.y + 10))
                 
                 #display mana value in the top right corner of each card
@@ -332,9 +378,10 @@ while run:
                 pygame.draw.ellipse(screen, (0, 0, 0), circle, 2)
                 
                 #display mana value
-                screen.blit(mana_text, (card_rect.x + card_rect.width - 25, card_rect.y + 5))
+                screen.blit(mana_text, (card_rect.x + card_rect.width - 25, card_rect.y - 5))
 
-
+                #display card information
+                draw_card_info(screen, card['info'], (card_rect.x + 5, card_rect.y + 100), info_font)        
 
 
         #display whos turn it is
@@ -392,7 +439,7 @@ while run:
         #PLAYER TURN
         #Depressed mode
         if activate_depressed and turn_active:
-            shield_to_add = math.ceil(damage_taken_last_turn / 3)
+            shield_to_add = math.ceil(damage_taken_last_turn / depressed_multiplier)
             player.update_shield(shield_to_add)
             damage_taken_last_turn = 0  
 
@@ -457,7 +504,7 @@ while run:
                                 enemy.update_shield(-selected_card['value'])
                                 #excited mode
                                 if excited_mode == True:
-                                    effective_damage += 1
+                                    effective_damage += excited_damage
 
                                 if effective_damage > 0:
                                     enemy.update_health(-effective_damage)
@@ -521,7 +568,7 @@ while run:
                                 elif selected_card == card:
                                     selected_card = None
 
-            
+                    
 
         #check if it's the enemys turn and end after X seconds
         if not turn_active and enemy_turn_text is not None:
@@ -540,14 +587,12 @@ while run:
 
         #handle level increase
         if enemy.health <= 0:
-            # Your existing code to handle post-combat cleanup
             player.mana = player.max_mana
             excited_mode = False
             discard_pile.extend(player_hand)
             player_hand.clear()
             draw_hand()
-            display_map = True
-            enemy_counter += 1
+            display_map = True 
 
             enemy_counter +=1
             if enemy_counter % 3 == 0:
@@ -555,9 +600,43 @@ while run:
                 enemy_types[level_count-1].remove(enemy_type)
                 enemy_type = random.choice(enemy_types[level_count])
                 enemy = Enemy(enemy_type)
+                if level_count == 1:
+                    player.update_health(5)
+                    if activate_excited:
+                        excited_damage = 2
+                    if activate_nervous:
+                        nervous_dmg = 5
+                    if activate_depressed:
+                        depressed_multiplier = 2
+                    if activate_vengeful:
+                        vengeful_multiplier = 0.50
+                    if activate_optimistic:
+                        add_new_cards()
+                    if activate_tired:
+                        player.update_health(8)
+                elif level_count == 2:
+                    print('level 2')
+                    player.max_mana += 1
+                    level_2 = True
+                elif level_count == 3:
+                    if activate_excited:
+                        excited_damage = 3
+                    if activate_nervous:
+                        nervous_dmg = 7
+                    if activate_depressed:
+                        depressed_multiplier = 1
+                    if activate_vengeful:
+                        vengeful_multiplier = 0.60
+                    if activate_optimistic:
+                        add_new_cards_2()
+                    if activate_tired:
+                        player.update_health(10)
+                        add_new_cards_2()
             else:
+                #print(enemy_types)
                 enemy_types[level_count].remove(enemy_type)
                 enemy_type = random.choice(enemy_types[level_count])
+                #print(enemy_types)
                 enemy = Enemy(enemy_type)
 
             print(f"Current Level: {level_count+1}")

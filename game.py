@@ -228,7 +228,7 @@ player = Player()
 
 #ENEMY
 enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
-               ["bee2","abominable","crabduo", "wraith","craggle"], #enemy_types[1]
+               ["bee","abominable","crabduo", "wraith","craggle"], #enemy_types[1]
                ["bees","terrorbird", "orcduo", "wraithtrio","wizard"], #enemy_types[2]
                ["demon","warrior", "bigbird"]] #enemy_types[3]
 enemy_type = random.choice(enemy_types[0])

@@ -247,14 +247,14 @@ level_2 = False
 
 #-------------------------------------------------------------------------------
 #CARDS
-cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+cards = [{'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 500, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
@@ -513,18 +513,18 @@ while run:
 
         #display player's shield and health
         player_shield_text = font.render(f"Shield: {player.shield}", True, (0, 0, 0))
-        screen.blit(player_shield_text, (50, player.rect.bottom + 70))
+        screen.blit(player_shield_text, (10, player.rect.bottom + 70))
 
         #enemy shield
         enemy_shield_text = font.render(f"Enemy Shield: {enemy.shield}", True, (0, 0, 0))
-        screen.blit(enemy_shield_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 70))
+        screen.blit(enemy_shield_text, (SCREEN_WIDTH - 200, enemy.rect.bottom + 70))
 
         #enemy resist
         enemy_resist_text = font.render(f"Enemy Resist: {enemy.get_reduction_percentage()}%", True, (0, 0, 0))
-        screen.blit(enemy_resist_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 100))
+        screen.blit(enemy_resist_text, (SCREEN_WIDTH - 200, enemy.rect.bottom + 100))
         
-        player_health_bar = pygame.Rect(50, player.rect.bottom + 10, health_bar_width * (player.health / player.max_health), health_bar_height)
-        enemy_health_bar = pygame.Rect(SCREEN_WIDTH - 80 - health_bar_width * (enemy.health / enemy.max_health), enemy.rect.bottom + 10, health_bar_width * (enemy.health / enemy.max_health), health_bar_height)
+        player_health_bar = pygame.Rect(10, player.rect.bottom + 10, health_bar_width * (player.health / player.max_health), health_bar_height)
+        enemy_health_bar = pygame.Rect(SCREEN_WIDTH - 40 - health_bar_width * (enemy.health / enemy.max_health), enemy.rect.bottom + 10, health_bar_width * (enemy.health / enemy.max_health), health_bar_height)
 
         pygame.draw.rect(screen, (0, 255, 0), player_health_bar)
         pygame.draw.rect(screen, (255, 0, 0), enemy_health_bar)
@@ -533,8 +533,8 @@ while run:
         enemy_health_text = font.render(f"Enemy Health: {enemy.health}", True, (0, 0, 0))
 
         #display health values in text
-        screen.blit(player_health_text, (50, player.rect.bottom + 40))
-        screen.blit(enemy_health_text, (SCREEN_WIDTH - 240, enemy.rect.bottom + 40))
+        screen.blit(player_health_text, (10, player.rect.bottom + 40))
+        screen.blit(enemy_health_text, (SCREEN_WIDTH - 200, enemy.rect.bottom + 40))
 
         #emotion buff in text
         if selected_emoji_index is not None:
@@ -564,7 +564,7 @@ while run:
 
             #display the text
             additional_text_rendered = font.render(additional_text, True, (0, 0, 0))
-            screen.blit(additional_text_rendered, (50, player.rect.bottom + 100))
+            screen.blit(additional_text_rendered, (10, player.rect.bottom + 100))
         
 
         #draw pile and discard pile
@@ -580,7 +580,7 @@ while run:
         card_width, card_height = 150, 180
         card_spacing = 15
         total_hand_width = len(player_hand) * card_width + (len(player_hand) - 1) * card_spacing
-        start_x = (SCREEN_WIDTH - total_hand_width) // 2
+        start_x = ((SCREEN_WIDTH - total_hand_width) // 2) - 40
 
         #-------------------------------------------------------------------------------------------------------------------------------------------
         #Active Game loop

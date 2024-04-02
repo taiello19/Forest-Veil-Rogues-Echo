@@ -35,11 +35,11 @@ class Enemy(pygame.sprite.Sprite):
         
     }
 
-    def __init__(self, enemy_type, x=900, y=100):
+    def __init__(self, enemy_type, x=900, y=200):
         super().__init__()
         image_path = (f'Images/enemies/{enemy_type}.png')
         self.enemy_type = enemy_type
-        self.image = pygame.transform.scale(pygame.image.load(image_path), (400, 400))
+        self.image = pygame.transform.scale(pygame.image.load(image_path), (300, 300))
         self.rect = self.image.get_rect(topleft=(x, y))
         enemy_stats = self.ENEMY_STATS.get(enemy_type, {})
 
@@ -69,7 +69,7 @@ class Enemy(pygame.sprite.Sprite):
         
         # Calculate the position for the text (centered above the enemy image)
         text_x = self.rect.centerx - text_surface.get_width() / 2
-        text_y = self.rect.top - text_surface.get_height() + 20  # 5 pixels above the enemy
+        text_y = self.rect.top - text_surface.get_height() - 5  # 5 pixels above the enemy
         
         # Blit the text surface to the screen
         surface.blit(text_surface, (text_x, text_y))

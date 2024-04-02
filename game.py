@@ -247,14 +247,14 @@ level_2 = False
 
 #-------------------------------------------------------------------------------
 #CARDS
-cards = [{'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},

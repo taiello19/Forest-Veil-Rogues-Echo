@@ -1,5 +1,6 @@
 import pygame
 import sys
+import time
 
 def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()

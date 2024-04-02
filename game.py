@@ -31,47 +31,184 @@ emotion_descriptions = {
     3: "Vengeful, When you take damage get angry and lash out damaging the enemy!",
     4: "Optimistic, Because of your positive attitude the game admins have blessed you with bonus rewards!",
     5: "Tired, You are super sleepy, play sleep cards to take a nap and restore some health!"
-    # Ensure there's an entry for every emotion index
 }
 def render_multiline_text(screen, font, text, position):
     lines = text.split("\n")
     x, y = position
-    screen.fill((0, 0, 0))  # Optionally, clear the screen for each text update for simplicity
+    screen.fill((0, 0, 0))  
     for line in lines:
         rendered_line = font.render(line, True, (255, 255, 255))
         screen.blit(rendered_line, (x, y))
         y += font.get_height()
 
-def display_intro_text(screen, font, text, pace):
-    words = text.split()
-    displayed_text = ""
-    line = ""
-    max_width = screen.get_width() - 100  # Leave some margin
-    y_position = SCREEN_HEIGHT // 2 - 20  # Starting Y position
+def render_text_with_shadow(screen, font, message, position, text_color, shadow_color=(0, 0, 0), offset=(2, 2), shadow_thickness=2):
+    for x in range(-shadow_thickness, shadow_thickness+1):
+        for y in range(-shadow_thickness, shadow_thickness+1):
+            shadow_pos = (position[0] + x, position[1] + y)
+            shadow_surface = font.render(message, True, shadow_color)
+            screen.blit(shadow_surface, shadow_pos)
+    text_surface = font.render(message, True, text_color)
+    screen.blit(text_surface, position)
 
-    screen.fill((0, 0, 0))  # Clear the screen for initial text display
+def wrap_text(text, font, max_width):
+    words = text.split(' ')
+    lines = []
+    current_line = ''
+    
     for word in words:
-        # Temporarily add the next word to line to check width
-        temp_line = line + word + " "
-        
-        # Measure the temporary line
+        test_line = f"{current_line} {word}".strip()
+        if font.size(test_line)[0] > max_width:
+            lines.append(current_line)
+            current_line = word
+        else:
+            current_line = test_line
+    lines.append(current_line)  
+    return lines
+
+def display_intro_text(screen, font, text, pace):
+    def render_skip_button():
+        # Draw button background
+        pygame.draw.rect(screen, (0, 0, 0), skip_button_rect)
+        #draw white outline around the button
+        pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, 2)
+        #draw the skip text on the button
+        screen.blit(skip_button_text, (skip_button_rect.x + 25, skip_button_rect.y + 8))
+
+    #setup for the skip button
+    skip_button_font = pygame.font.Font(None, 30) 
+    skip_button_text = skip_button_font.render('Skip', True, (255, 255, 255))
+    skip_button_rect = pygame.Rect(SCREEN_WIDTH - 150, SCREEN_HEIGHT - 70, 100, 40)  
+
+    screen.fill((0, 0, 0))
+    render_skip_button()  
+
+    #function to immediately render all text and wait for skip
+    def render_all_text_and_wait_for_skip():
+        wrapped_lines = wrap_text(text, font, max_width)
+        y_position = y_start_position
+        for wrapped_line in wrapped_lines:
+            text_surface = font.render(wrapped_line, True, (255, 255, 255))
+            screen.blit(text_surface, (50, y_position))
+            y_position += font.get_height()
+        render_skip_button()
+        pygame.display.flip()
+
+        #wait for a second skip to proceed
+        waiting_for_skip = True
+        while waiting_for_skip:
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and skip_button_rect.collidepoint(pygame.mouse.get_pos()):
+                    waiting_for_skip = False
+                elif event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+            pygame.time.wait(100)
+
+    words = text.split()
+    line = ""
+    max_width = screen.get_width() - 100
+    y_start_position = SCREEN_HEIGHT // 2 - 200
+
+    for word in words:
+        temp_line = f"{line}{word} "
         line_width, _ = font.size(temp_line)
         
-        if line_width < max_width:
-            line = temp_line
+        if line_width >= max_width:
+            #when exceeding max width, prepare for a new line
+            screen.fill((0, 0, 0))
+            render_skip_button()
+            line = word + " "
         else:
-            # If the line exceeds max width, render the current line and start a new one
-            displayed_text += line + "\n"  # Move the current line to displayed text
-            line = word + " "  # Start a new line with the current word
-            # Render the updated text and then clear it for simplicity
-            render_multiline_text(screen, font, displayed_text + line, (50, y_position))
-        
-        # Render the updated text with the new word added
-        render_multiline_text(screen, font, displayed_text + line, (50, y_position))
-        pygame.display.flip()
-        time.sleep(pace)  # Pause after rendering the new word
+            line = temp_line
 
-    time.sleep(1)
+        #render the current line and the skip button
+        screen.fill((0, 0, 0))
+        render_multiline_text(screen, font, line, (50, y_start_position))
+        render_skip_button()
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and skip_button_rect.collidepoint(pygame.mouse.get_pos()):
+                render_all_text_and_wait_for_skip()
+                return
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        time.sleep(pace)
+
+    render_all_text_and_wait_for_skip()
+
+def show_cutscene(screen, background_path, text_color, message):
+    background = pygame.image.load(background_path).convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.blit(background, (0, 0))
+
+    font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 50)
+    wrapped_text = wrap_text(message, font, SCREEN_WIDTH - 100)
+
+    y_pos_start = (SCREEN_HEIGHT // 2) - (len(wrapped_text) * font.get_height() // 2)
+    for line in wrapped_text:
+        text_width, text_height = font.size(line)
+        position = ((SCREEN_WIDTH - text_width) // 2, y_pos_start)
+        render_text_with_shadow(screen, font, line, position, text_color, shadow_color=(0, 0, 0), offset=(2, 2), shadow_thickness=2)
+        y_pos_start += text_height
+
+    # Setup for the "Continue" button, similar to your skip button setup
+    continue_button_font = pygame.font.Font(None, 30) 
+    continue_button_text = continue_button_font.render('Continue', True, (255, 255, 255))
+    continue_button_rect = pygame.Rect(SCREEN_WIDTH - 150, SCREEN_HEIGHT - 70, 100, 40)
+    # Draw button background and outline
+    pygame.draw.rect(screen, (0, 0, 0), continue_button_rect)
+    pygame.draw.rect(screen, (255, 255, 255), continue_button_rect, 2)
+    # Center the "Continue" text within the button
+    text_rect = continue_button_text.get_rect(center=continue_button_rect.center)
+    screen.blit(continue_button_text, text_rect)
+
+    pygame.display.flip()
+
+    waiting_for_click = True
+    while waiting_for_click:
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and continue_button_rect.collidepoint(pygame.mouse.get_pos()):
+                waiting_for_click = False
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+
+def draw_shaking_text(screen, background_path, font, message, original_position, text_color, shake_intensity=5, duration=5):
+    start_time = pygame.time.get_ticks()  # Get the start time in milliseconds
+    end_time = start_time + duration * 1000  # Duration converted to milliseconds
+
+    while pygame.time.get_ticks() < end_time:
+        background = pygame.image.load(background_path).convert()
+        background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen.blit(background, (0, 0))  
+        
+        # Shaking effect
+        x_shake = original_position[0] + random.randint(-shake_intensity, shake_intensity)
+        y_shake = original_position[1] + random.randint(-shake_intensity, shake_intensity)
+        
+        # Create a surface for text
+        text_surface = font.render(message, True, text_color)
+        screen.blit(text_surface, (x_shake, y_shake))
+        
+        pygame.display.flip()  # Update the display
+        
+        # Event loop to keep the application responsive
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        pygame.time.delay(20)
+
+def endgame():
+    show_cutscene(screen, 'Images/wizardtower.jpg', (255, 255, 255), "You break through a clearing in the forest to find a msytical looking tower. You walk inside to find a half open chest, inside you see a crystal, you pick it up and are restored of your emotions when all of a sudden you hear a voice in your head...")
+    final_message = ". . . you weren't supposed to make it this far. I'm sorry it has come to this . . . goodbye . . . "
+    display_intro_text(screen, font, final_message , 0.5)
+    draw_shaking_text(screen, 'Images/cave.jpg', font, "F a l l i n g . . .", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), (255, 255, 255), shake_intensity=5, duration=3)
+    
 #-------------------------------------------------------------------------------
 #PLAYERS
 player = Player()
@@ -80,9 +217,9 @@ player = Player()
 
 #ENEMY
 enemy_types = [["spider", "caveman", "bat","goop", "crab"] , #enemy_types[0]
-               ["bee2","orc","crabduo", "wraith","craggle"], #enemy_types[1]
+               ["bee2","abominable","crabduo", "wraith","craggle"], #enemy_types[1]
                ["bees","terrorbird", "orcduo", "wraithtrio","wizard"], #enemy_types[2]
-               ["demon","abominable", "bigbird"]] #enemy_types[3]
+               ["demon","warrior", "bigbird"]] #enemy_types[3]
 enemy_type = random.choice(enemy_types[0])
 enemy = Enemy(enemy_type)
 #enemy_types[0].remove(enemy_type)
@@ -99,14 +236,14 @@ level_2 = False
 
 #-------------------------------------------------------------------------------
 #CARDS
-cards = [{'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
-         {'type': 'Attack', 'value': 5, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+cards = [{'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
+         {'type': 'Attack', 'value': 50, 'mana': 1, 'name': 'Attack', 'info': 'Deal 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
          {'type': 'Defend', 'value': 5, 'mana': 1, 'name': 'Defend', 'info': 'Block 5 Damage'},
@@ -309,7 +446,7 @@ if selected_emoji_index is not None:
 intro_text_skip = 'skip'
 intro_text = f"You wake up in an unfamiliar location, with no memories or idea of who you are . . . you look around but all you can see is trees for miles. You stand up dazed and confused but all of a sudden a chest appears out of nowhere. You walk up to the chest and it opens automatically displaying 6 different masks. You reach in and pull out the {intro_colour} mask. You feel a strong force pulling you to equip the mask. You put the mask on and a strong wave of {intro_variable} fills your soul. You look up and see three pathways form in front of you, choose wisely . . . "
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
-display_intro_text(screen, font, intro_text_skip, 0.5)
+display_intro_text(screen, font, intro_text, 0.2)
 
 run = True
 while run:
@@ -338,7 +475,9 @@ while run:
                     display_map = False
                     break
                 elif node_clicked == 'heal':
-                    player.update_health(10)
+                    health_gain = player.max_health - player.health
+                    player.update_health(health_gain)
+                    show_cutscene(screen, 'Images/campfire.png', (255 ,255 ,255) , f"You notice a campfire out of the corner of your eye, you sit down and have a quick snack. Heal {health_gain} health!")
                     break
             elif event.type == pygame.QUIT:
                 run = False
@@ -673,6 +812,11 @@ while run:
 
         #handle level increase
         if enemy.health <= 0:
+            if enemy.enemy_type == "warrior" or enemy.enemy_type == "demon" or enemy.enemy_type == "bigbird":
+                endgame()
+                break
+            
+            show_cutscene(screen,  'Images/forestpath.jpg', (255 ,255 ,255) , "You continue down the path...")
             player.mana = player.max_mana
             player.shield = 0
             excited_mode = False
@@ -691,8 +835,11 @@ while run:
                 enemy_types[level_count-1].remove(enemy_type)
                 enemy_type = random.choice(enemy_types[level_count])
                 enemy = Enemy(enemy_type)
+                #def show_cutscene(screen, background_path, text_color, message, duration=5):
                 if level_count == 1:
-                    player.update_health(5)
+                    health_gain = 5
+                    player.update_health(health_gain)
+                    show_cutscene(screen,  'Images/levelup.jpg', (255 ,255 ,255) , f"You leveled up! You feel your emotions swirling inside, you feel you have more control over your emotions. Gain a small boost to your emotional buff and heal {health_gain} health!")
                     if activate_excited:
                         #Extra dmg per attack
                         excited_damage = 2
@@ -710,10 +857,14 @@ while run:
                         add_new_cards()
                     if activate_tired:
                         player.update_health(8)
+
+
                 elif level_count == 2:
+                    show_cutscene(screen, 'Images/levelup.jpg', (255 ,255 ,255) , "You leveled up! You look to your left and see a small gem stone hidden in a tree. You grab it out and feel it absorb into your body. You now have +1 max mana and card draw!")
                     player.max_mana += 1
                     level_2 = True
                 elif level_count == 3:
+                    show_cutscene(screen, 'Images/levelup.jpg', (255 ,255 ,255), 'You leveled up! You feel your emotions swirling inside, you feel you have more control over your emotions. Gain a small boost to your emotional buff!')
                     if activate_excited:
                         excited_damage = 3
                     if activate_nervous:

@@ -503,7 +503,7 @@ while run:
 
         #display players
         player.draw(screen)
-        enemy.draw(screen)
+        enemy.draw(screen, font)
 
         #display mana
         mana_text = font.render(f"{player.mana}/{player.max_mana}", True, (0, 0, 255))

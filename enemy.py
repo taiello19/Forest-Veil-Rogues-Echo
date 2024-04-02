@@ -60,8 +60,19 @@ class Enemy(pygame.sprite.Sprite):
 
         return self.damage_red * 100
 
-    def draw(self, surface):
+    def draw(self, surface, font):
+    # Draw the enemy image
         surface.blit(self.image, self.rect)
+        
+        # Create a text surface with the enemy's name
+        text_surface = font.render(self.enemy_type.capitalize(), True, (255, 255, 255))
+        
+        # Calculate the position for the text (centered above the enemy image)
+        text_x = self.rect.centerx - text_surface.get_width() / 2
+        text_y = self.rect.top - text_surface.get_height() + 20  # 5 pixels above the enemy
+        
+        # Blit the text surface to the screen
+        surface.blit(text_surface, (text_x, text_y))
 
     def update_health(self, amount):
         if amount > 0:

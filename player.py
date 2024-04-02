@@ -2,7 +2,7 @@
 import pygame
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x=0, y=100, health=80, mana=3):
+    def __init__(self, x=0, y=100, health=1, mana=3):
         super().__init__()
         self.image = pygame.transform.scale(pygame.image.load('Images/Player.png'), (400, 400))
         self.rect = self.image.get_rect(topleft=(x, y))

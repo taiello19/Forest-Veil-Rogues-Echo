@@ -22,6 +22,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 title_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_2.ttf', 72)
 font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 30)
 info_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 20)
+shake_font = pygame.font.Font('Fonts/Kingthings_Calligraphica_Light.ttf', 50)
 
 emotion_images = [pygame.image.load(f'Images/emotion{i}.png') for i in range(1, 7)]
 emotion_descriptions = {
@@ -65,7 +66,7 @@ def wrap_text(text, font, max_width):
     lines.append(current_line)  
     return lines
 
-def display_intro_text(screen, font, text, pace):
+def display_intro_text(screen, font, text, pace, background_path=None):
     def render_skip_button():
         # Draw button background
         pygame.draw.rect(screen, (0, 0, 0), skip_button_rect)
@@ -79,11 +80,17 @@ def display_intro_text(screen, font, text, pace):
     skip_button_text = skip_button_font.render('Skip', True, (255, 255, 255))
     skip_button_rect = pygame.Rect(SCREEN_WIDTH - 150, SCREEN_HEIGHT - 70, 100, 40)  
 
-    screen.fill((0, 0, 0))
+    if background_path != None:
+        background = pygame.image.load(background_path).convert()
+        background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        screen.blit(background, (0, 0)) 
+    else: 
+        screen.fill((0, 0, 0))
     render_skip_button()  
 
     #function to immediately render all text and wait for skip
     def render_all_text_and_wait_for_skip():
+        screen.fill((0, 0, 0))
         wrapped_lines = wrap_text(text, font, max_width)
         y_position = y_start_position
         for wrapped_line in wrapped_lines:
@@ -207,7 +214,11 @@ def endgame():
     show_cutscene(screen, 'Images/wizardtower.jpg', (255, 255, 255), "You break through a clearing in the forest to find a msytical looking tower. You walk inside to find a half open chest, inside you see a crystal, you pick it up and are restored of your emotions when all of a sudden you hear a voice in your head...")
     final_message = ". . . you weren't supposed to make it this far. I'm sorry it has come to this . . . goodbye . . . "
     display_intro_text(screen, font, final_message , 0.5)
-    draw_shaking_text(screen, 'Images/cave.jpg', font, "F a l l i n g . . .", (SCREEN_WIDTH//2, SCREEN_HEIGHT//2), (255, 255, 255), shake_intensity=5, duration=3)
+    draw_shaking_text(screen, 'Images/cave.jpg', shake_font, ". . .  F a l l i n g  . . .", (SCREEN_WIDTH - 900, SCREEN_HEIGHT//2), (255, 255, 255), shake_intensity=5, duration=4)
+
+def player_death():
+    display_intro_text(screen, font, "You've taken a lot of damage . . . you start stumbling around and you feel light headed . . . The voice inside your head says . . . maybe next time young one . . . you start to black out . . ." , 0.5, 'Images/deathforest.jpg')
+    draw_shaking_text(screen, 'Images/graveyard.jpg', shake_font, ". . .  Y o u   a r e   d e a d  . . .", (SCREEN_WIDTH - 900, SCREEN_HEIGHT//2), (138, 3, 3), shake_intensity=5, duration=4)
     
 #-------------------------------------------------------------------------------
 #PLAYERS
@@ -444,9 +455,9 @@ if selected_emoji_index is not None:
         intro_colour = 'purple'
 
 intro_text_skip = 'skip'
-intro_text = f"You wake up in an unfamiliar location, with no memories or idea of who you are . . . you look around but all you can see is trees for miles. You stand up dazed and confused but all of a sudden a chest appears out of nowhere. You walk up to the chest and it opens automatically displaying 6 different masks. You reach in and pull out the {intro_colour} mask. You feel a strong force pulling you to equip the mask. You put the mask on and a strong wave of {intro_variable} fills your soul. You look up and see three pathways form in front of you, choose wisely . . . "
+intro_text = f"You wake up in an unfamiliar location, with no memories or idea of who you are . . . you look around but all you can see is trees for miles . . . You stand up dazed and confused but all of a sudden a chest appears out of nowhere . . . You walk up to the chest and it opens automatically displaying 6 different masks . . . You reach in and pull out the {intro_colour} mask . . . You feel a strong force pulling you to equip the mask . . . You put the mask on and a strong wave of {intro_variable} fills your soul . . . You look up and see three pathways form in front of you, choose wisely . . . "
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------
-display_intro_text(screen, font, intro_text, 0.2)
+display_intro_text(screen, font, intro_text, 0.4)
 
 run = True
 while run:
@@ -465,6 +476,7 @@ while run:
         screen.blit(background, (0,0))
         mouse_pos = pygame.mouse.get_pos()
         game_map.render(screen, mouse_pos)  
+        game_map.draw_legend(screen, font)
         pygame.display.update()
         node_clicked = False 
         for event in pygame.event.get():
@@ -809,7 +821,9 @@ while run:
             rendered_text = font.render(sleep_text, True, (255, 255, 255))
             screen.blit(rendered_text, (x, y))
 
-
+        if player.health <= 0:
+            player_death()
+            break
         #handle level increase
         if enemy.health <= 0:
             if enemy.enemy_type == "warrior" or enemy.enemy_type == "demon" or enemy.enemy_type == "bigbird":

@@ -286,6 +286,37 @@ class Map:
     def reset_map(self):
         for node in self.nodes:
             node.visited = False
+    
+    def render_text_with_shadow(self, screen, font, message, position, text_color, shadow_color=(0, 0, 0), offset=(2, 2), shadow_thickness=1):
+        # Render shadow
+        for x in range(-shadow_thickness, shadow_thickness+1):
+            for y in range(-shadow_thickness, shadow_thickness+1):
+                if x or y:  # Skip the shadow drawing offset for the main text
+                    shadow_pos = (position[0] + x * offset[0], position[1] + y * offset[1])
+                    shadow_surface = font.render(message, True, shadow_color)
+                    screen.blit(shadow_surface, shadow_pos)
+        # Render main text
+        text_surface = font.render(message, True, text_color)
+        screen.blit(text_surface, position)
+    
+    def draw_legend(self, screen, font):
+        node_types = {
+            'battle': ((211, 211, 211), "Emotion Underlings"),
+            'battle2': ((150, 150, 150), "Soul Sovereigns"),
+            'heal': ((75, 150, 32), "Healing Zones"),
+            'battle3': ((50, 50, 50), "Temperament Titans"),
+            'boss': ((134, 1, 17), "Mood Monarchs"),
+        }
+        
+        x_offset = SCREEN_WIDTH - 250
+        y_offset = 25
+        circle_radius = 10
+        space_between_lines = 25
+        
+        for node_type, (color, text) in node_types.items():
+            pygame.draw.circle(screen, color, (x_offset, y_offset + circle_radius), circle_radius)
+            self.render_text_with_shadow(screen, font, text, (x_offset + 25, y_offset), (255, 255, 255))
+            y_offset += space_between_lines
 
 # Example usage:
 pygame.init()

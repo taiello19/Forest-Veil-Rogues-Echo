@@ -211,7 +211,7 @@ def draw_shaking_text(screen, background_path, font, message, original_position,
         pygame.time.delay(20)
 
 def endgame():
-    show_cutscene(screen, 'Images/wizardtower.jpg', (255, 255, 255), "You break through a clearing in the forest to find a msytical looking tower. You walk inside to find a half open chest, inside you see a crystal, you pick it up and are restored of your emotions when all of a sudden you hear a voice in your head...")
+    show_cutscene(screen, 'Images/wizardtower.jpg', (255, 255, 255), "You break through a clearing in the forest to find a mystical looking tower. You walk inside to find a half open chest, inside you see a crystal, you pick it up and are restored of your emotions when all of a sudden you hear a voice in your head...")
     final_message = ". . . you weren't supposed to make it this far. I'm sorry it has come to this . . . goodbye . . . "
     display_intro_text(screen, font, final_message , 0.5)
     draw_shaking_text(screen, 'Images/cave.jpg', shake_font, ". . .  F a l l i n g  . . .", (SCREEN_WIDTH - 1000, SCREEN_HEIGHT//2), (255, 255, 255), shake_intensity=5, duration=4)
@@ -644,6 +644,7 @@ while run:
                     turn_active = True  
                     enemy_turn_text = None  
             else:
+                enemy.enemy_animation(screen, font)
                 enemy_turn_text,effective_player_damage = enemy.perform_action(player)
                 if effective_player_damage is not None:
                     #depressed mode
@@ -736,6 +737,7 @@ while run:
                         if selected_card is not None and player.mana >= selected_card['mana']:
                             #card type will determine the action taken on use button click
                             if selected_card['type'] == 'Attack':
+                                player.attack_animation(screen)
                                 #deal damage to the enemy
                                 effective_damage = selected_card['value'] - enemy.shield
                                 enemy.update_shield(-selected_card['value'])
@@ -748,9 +750,11 @@ while run:
                                 if activate_excited == True and not excited_mode:
                                     excited_mode = True
                             elif selected_card['type'] == 'Defend':
+                                player.defend_animation(screen)
                                 #add shield to the player
                                 player.update_shield(selected_card['value'])
                             elif selected_card['type'] == 'Self':
+                                player.defend_animation(screen)
                                 player_damage = selected_card['value']
                                 player.update_health(-player_damage)
                                 if activate_vengeful == True:
@@ -762,6 +766,7 @@ while run:
                                 player.update_shield(selected_card['shield'])
 
                             elif selected_card['type'] == 'SleepDMG':
+                                player.attack_animation(screen)
                                 effective_damage = selected_card['value'] - enemy.shield
                                 enemy.update_shield(-selected_card['value'])
                                 enemy.update_health(-effective_damage)
@@ -770,14 +775,17 @@ while run:
                                 sleep_text = f'You restored {restore} health!'
 
                             elif selected_card['type'] == 'Stun':
+                                player.attack_animation(screen)
                                 stun = True
                             elif selected_card['type'] == 'Dual':
+                                player.attack_animation(screen)
                                 effective_damage = selected_card['value'] - enemy.shield
                                 enemy.update_shield(-selected_card['value'])
                                 enemy.update_health(-effective_damage)
                                 shield = selected_card['shield']
                                 player.update_shield(shield)
                             elif selected_card['type'] == 'SleepBlock':
+                                player.defend_animation(screen)
                                 restore = selected_card['sleepyTime']
                                 player.update_health(restore)
                                 sleep_text = f'You restored {restore} health!'

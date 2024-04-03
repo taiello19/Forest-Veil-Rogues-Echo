@@ -59,6 +59,33 @@ class Enemy(pygame.sprite.Sprite):
     def get_reduction_percentage(self):
 
         return self.damage_red * 100
+    
+    def enemy_animation(self, screen, font):
+        original_x = self.rect.x
+        left_target_x = original_x - 20  # Move 20 pixels left
+        right_target_x = original_x + 20  # Move 20 pixels right
+        steps = 10  # Number of steps for each movement
+        
+        # Move to the left
+        for step in range(steps):
+            self.rect.x += (left_target_x - original_x) / steps
+            self.draw(screen, font)  # Assuming you have a draw method to render the sprite
+            pygame.display.update()
+            pygame.time.wait(10)  # Delay between steps
+        
+        # Move to the right
+        for step in range(steps * 2):  # Double steps to move to the right and then back
+            self.rect.x += (right_target_x - left_target_x) / (steps * 2)
+            self.draw(screen, font)
+            pygame.display.update()
+            pygame.time.wait(10)
+        
+        # Move back to original position
+        for step in range(steps):
+            self.rect.x -= (right_target_x - original_x) / steps
+            self.draw(screen, font)
+            pygame.display.update()
+            pygame.time.wait(10)
 
     def draw(self, surface, font):
     # Draw the enemy image

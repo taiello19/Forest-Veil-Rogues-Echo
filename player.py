@@ -21,6 +21,36 @@ class Player(pygame.sprite.Sprite):
             self.health = self.max_health
         elif self.health < 0:
             self.health = 0
+    
+    def attack_animation(self, screen):
+        original_x = self.rect.x
+        target_x = original_x + 20  # Move 20 pixels to the right
+        steps = 10  # Number of steps in the animation
+        for step in range(steps):
+            self.rect.x += (target_x - original_x) / steps  # Move right
+            self.draw(screen)
+            pygame.display.update()
+            pygame.time.wait(10)  # Wait 10 milliseconds between steps
+        for step in range(steps):
+            self.rect.x -= (target_x - original_x) / steps  # Move back to original position
+            self.draw(screen)
+            pygame.display.update()
+            pygame.time.wait(10)
+    
+    def defend_animation(self, screen):
+        original_y = self.rect.y
+        target_y = original_y - 20  # Move 20 pixels up
+        steps = 10  # Number of steps in the animation
+        for step in range(steps):
+            self.rect.y += (target_y - original_y) / steps  # Move up
+            self.draw(screen)
+            pygame.display.update()
+            pygame.time.wait(10)  # Wait 10 milliseconds between steps
+        for step in range(steps):
+            self.rect.y -= (target_y - original_y) / steps  # Move back to original position
+            self.draw(screen)
+            pygame.display.update()
+            pygame.time.wait(10)  # Wait 10 milliseconds between steps
 
     def update_mana(self, amount):
         self.mana += amount

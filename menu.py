@@ -37,7 +37,7 @@ def main_menu(screen, title_font, font, emotion_images, emotion_descriptions):
         intro_position = ((SCREEN_WIDTH - font.size(intro_message)[0]) // 2, 350)
         render_text_with_shadow(screen, font, intro_message, intro_position, (255, 255, 255))
 
-        intro_message2 = "Please note some emotions might not be available as the game is still in development, thank you for your patience!"
+        intro_message2 = "This game is still in beta, please feel free to give feedback to the developers!"
         intro_position2 = ((SCREEN_WIDTH - font.size(intro_message2)[0]) // 2, 400)
         render_text_with_shadow(screen, font, intro_message2, intro_position2, (255, 255, 255))
 

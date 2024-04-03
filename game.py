@@ -856,7 +856,7 @@ while run:
                     show_cutscene(screen,  'Images/levelup.jpg', (255 ,255 ,255) , f"You leveled up! You feel your emotions swirling inside, you feel you have more control over your emotions. Gain a small boost to your emotional buff and heal {health_gain} health!")
                     if activate_excited:
                         #Extra dmg per attack
-                        excited_damage = 2
+                        excited_damage = 4
                     if activate_nervous:
                         #Each turn deal dmg
                         nervous_dmg = 5
@@ -880,7 +880,7 @@ while run:
                 elif level_count == 3:
                     show_cutscene(screen, 'Images/levelup.jpg', (255 ,255 ,255), 'You leveled up! You feel your emotions swirling inside, you feel you have more control over your emotions. Gain a small boost to your emotional buff!')
                     if activate_excited:
-                        excited_damage = 3
+                        excited_damage = 6
                     if activate_nervous:
                         nervous_dmg = 7
                     if activate_depressed:

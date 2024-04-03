@@ -26,9 +26,9 @@ class Enemy(pygame.sprite.Sprite):
         "wizard": {"max_health": 80, "max_shield": 20,"damage": 30,"defend": 12,"dot":0, "dot_duration":3, "reduction": 0},
         
         #Bosses
-        "warrior": {"max_health": 95, "max_shield": 0,"damage": 12,"defend": 4,"dot":0, "dot_duration":5, "reduction": 0.4},
-        "demon": {"max_health": 110, "max_shield": 30,"damage": 12,"defend": 6,"dot":4, "dot_duration":3, "reduction": 0.2},
-        "bigbird": {"max_health": 100, "max_shield": 20,"damage": 12,"defend": 4,"dot":0.6, "dot_duration":2, "reduction": 0},
+        "warrior": {"max_health": 105, "max_shield": 0,"damage": 15,"defend": 4,"dot":0, "dot_duration":5, "reduction": 0.4},
+        "demon": {"max_health": 120, "max_shield": 30,"damage": 15,"defend": 6,"dot":4, "dot_duration":3, "reduction": 0.2},
+        "bigbird": {"max_health": 110, "max_shield": 20,"damage": 15,"defend": 4,"dot":0.6, "dot_duration":2, "reduction": 0},
         
         
         

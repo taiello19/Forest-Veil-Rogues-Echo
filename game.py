@@ -301,9 +301,9 @@ def add_emotion_cards(deck, emotion_index):
         3: [{'type': 'Self', 'value': 2, 'shield': 6, 'mana': 2, 'name': 'Double-Edge', 'info': 'Deal 2 Damage\n to yourself'}, 
             {'type': 'Dual', 'value': 6, 'shield': 3, 'mana': 1, 'name': 'Rampage',  'info': 'Deal 7 Damage,\n Block 3 Damage'}],  #vengeful - Self = take 2 damage
 
-        4: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Slash', 'info': 'Deal 7 Damage'}, 
+        4: [{'type': 'Attack', 'value': 5, 'mana': 0, 'name': 'Slash', 'info': 'Deal 5 Damage'}, 
             {'type': 'Defend', 'value': 7, 'mana': 0, 'name': 'Lock Down', 'info': 'Block 7 Damage'}, 
-            {'type': 'Attack', 'value': 9, 'mana': 1, 'name': 'Bash', 'info': 'Deal 9 Damage'}],  #optimistic
+            {'type': 'Attack', 'value': 8, 'mana': 1, 'name': 'Bash', 'info': 'Deal 8 Damage'}],  #optimistic
             
         5: [{'type': 'SleepDMG', 'value': 3, 'mana': 0, 'sleepyTime': 5, 'name': 'Sleep Attack', 'info': 'Deal 3 Damage,\n Heal 5 Health'}, 
             {'type': 'SleepBlock', 'value': 0, 'mana': 2, 'sleepyTime': 10, 'name': 'Long Slumber', 'info': 'Heal 10 Health'}],  #tired

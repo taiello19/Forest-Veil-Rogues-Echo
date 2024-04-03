@@ -2,7 +2,8 @@ Welcome to Forest Veil: Rogue's Echo
 
 
 ------ Running the script ------
-In order to start this game all you have to do is run the game.py file. Ensure you are in the proper directory
+Please run pip install pygame in the directory "Forest-Veil-Rogues-Echo"
+In order to start this game all you have to do is run the game.py file. Ensure you are in the proper directory ("Forest-Veil-Rogues-Echo")
 Once the game opens, you are in the main menu where you can select your emotion
 Hit play and it will bring you into the map. Select one of the paths, once you start down a path you cant go back or move laterally
 Once in combat Select cards(click the card again to unselect) and hit 'use' to use them, track your mana in the bottom left

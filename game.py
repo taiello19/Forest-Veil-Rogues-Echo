@@ -295,7 +295,7 @@ def add_emotion_cards(deck, emotion_index):
         1: [{'type': 'Attack', 'value': 7, 'mana': 0, 'name': 'Wood Spear', 'info': 'Deal 5 Damage'}, 
             {'type': 'Defend', 'value': 6, 'mana': 0, 'name': 'Wood Wall', 'info': 'Block 6 Damage'}],  #nervous
 
-        2: [{'type': 'Defend', 'value': 10, 'mana': 2, 'name': 'Large Shield', 'info': 'Block 10 Damage'}, 
+        2: [{'type': 'Defend', 'value': 12, 'mana': 2, 'name': 'Large Shield', 'info': 'Block 10 Damage'}, 
             {'type': 'Dual', 'value': 7, 'shield': 3, 'mana': 1, 'name': 'Lash Out', 'info': 'Deal 7 Damage,\n Block 3 Damage'}],  #depressed - dual = deal damage and gain half that in shield
 
         3: [{'type': 'Self', 'value': 2, 'shield': 6, 'mana': 2, 'name': 'Double-Edge', 'info': 'Deal 2 Damage\n to yourself'}, 
@@ -376,7 +376,7 @@ selected_card = None
 
 #remove later, temporary enemy turn sim before enemy AI is added
 start_enemy_turn_time = 0
-enemy_turn_duration = 3  #in seconds
+enemy_turn_duration = 5  #in seconds
 
 enemy_turn_text = None
 system_text = None

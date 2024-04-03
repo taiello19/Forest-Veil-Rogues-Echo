@@ -894,7 +894,7 @@ while run:
                     if activate_depressed:
                         depressed_multiplier = 1
                     if activate_vengeful:
-                        vengeful_multiplier = 0.80
+                        vengeful_multiplier = 2.0
                     if activate_optimistic:
                         add_new_cards_2()
                     if activate_tired:

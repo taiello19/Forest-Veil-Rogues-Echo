@@ -1,4 +1,6 @@
 Welcome to Forest Veil: Rogue's Echo
+This is a project that was created during my final project for 4483b Game Design at the University of Western Ontario.
+The game is currently in a beta-like state and even though it has been submitted, I still plan to work on this game and improve it over time
 
 
 ------ Running the script ------

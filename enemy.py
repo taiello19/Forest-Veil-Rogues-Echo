@@ -19,7 +19,7 @@ class Enemy(pygame.sprite.Sprite):
         "craggle": {"max_health": 55, "max_shield": 0,"damage": 5,"defend": 5,"dot":0.4, "dot_duration":1, "reduction": 0},
         
         #Level 3 Enemies
-        "bees": {"max_health": 60, "max_shield": 5,"damage": 7,"defend": 7,"dot":6, "dot_duration":3, "reduction": 0},
+        "bees": {"max_health": 60, "max_shield": 5,"damage": 7,"defend": 8,"dot":6, "dot_duration":3, "reduction": 0},
         "terrorbird": {"max_health": 60, "max_shield": 10,"damage": 10,"defend": 0,"dot":0, "dot_duration":0, "reduction": 0.2},
         "orcduo": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 4,"dot":0, "dot_duration":4, "reduction": 0.2},
         "wraithtrio": {"max_health": 70, "max_shield": 0,"damage": 8,"defend": 8,"dot":0.2, "dot_duration":1, "reduction": 0},
